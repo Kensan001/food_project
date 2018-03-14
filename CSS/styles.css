@@ -1,0 +1,11 @@
+@charset "UTF-8";
+/*altijd beginnen met dit in CSS schrijven*/
+
+header {
+
+    width: 100%;
+    height: 120px;
+    background-image: url("../IMG/banner-1559399.jpg");
+    background-size: cover;
+    /*cover: stretcht heel de image over heel de breedte van de webpagina*/
+}
