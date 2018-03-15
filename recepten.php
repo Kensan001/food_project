@@ -13,19 +13,17 @@
     <link rel="stylesheet" href="LIB/bootstrap-3.3.6/css/bootstrap.min.css">
     <!--optional theme !-->
     <link rel="stylesheet" href="LIB/bootstrap-3.3.6/css/bootstrap-theme.min.css">
+    <!-- fonts -->
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <!-- javascript, eerst Jquery dan pas bootstrap anders werkt het niet -->
     <script type="text/javascript" src="LIB/jquery-1.12.1.min.js"></script>
     <script src="LIB/bootstrap-4.0.0-beta-dist/js/bootstrap.min.js"></script>
 
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
 
 <!-- link naar onze css file -->
 <link rel="stylesheet" type="text/css" href="CSS/styles.css">
-
-<header></header>
 
 <body>
     <!--blank spacing at the top -->
@@ -58,6 +56,19 @@
                 </div>
             </nav>
         </div>
+
+        <div class="well">
+            <!-- wrap div om gemakkelijk het geheel van de zoekbar & button te restylen in css  -->
+            <div class="wrap">
+                <input type="text" class="searchTerm" placeholder="Zoek...">
+                <button type="submit" class="searchButton">
+                    <i class="fa fa-search"></i> <!-- search icon bootstrap -->
+                </button>
+            </div>
+        </div>
+
+
+
     </div>
     <script></script>
 </body>

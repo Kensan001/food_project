@@ -13,19 +13,17 @@
     <link rel="stylesheet" href="LIB/bootstrap-3.3.6/css/bootstrap.min.css">
     <!--optional theme !-->
     <link rel="stylesheet" href="LIB/bootstrap-3.3.6/css/bootstrap-theme.min.css">
+    <!-- fonts -->
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <!-- javascript, eerst Jquery dan pas bootstrap anders werkt het niet -->
     <script type="text/javascript" src="LIB/jquery-1.12.1.min.js"></script>
     <script src="LIB/bootstrap-4.0.0-beta-dist/js/bootstrap.min.js"></script>
 
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 </head>
 
 <!-- link naar onze css file -->
 <link rel="stylesheet" type="text/css" href="CSS/styles.css">
-
-<header></header>
 
 <body>
     <!--blank spacing at the top -->
@@ -52,7 +50,6 @@
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <!--<li class="active"><a href="index.php">HOME</a></li>-->
                         <li><a href="index.php">HOME</a></li>
                         <li><a href="recepten.php">RECEPTEN</a></li>
                     </ul>

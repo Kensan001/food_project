@@ -1,56 +1,97 @@
-@charset "UTF-8";
-/*altijd beginnen met dit in CSS schrijven*/
+@charset "UTF-8"; /*altijd beginnen met dit in CSS schrijven*/
+@import url("https://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"); /*Belangrijk om alle bootstrap fa fa icons weer te geven !*/
 
-body{
-    background-color:beige;
+body {
+    background-color: beige;
     font-family: 'Open Sans', sans-serif;
     font-size: 16px;
 }
 
-.container{
+.container {
     background-color: white;
-
 }
 
-p.TopOfPage{
+p.TopOfPage {
     padding-top: 40px;
 }
 
-p.TopOfContainer{
+p.TopOfContainer {
     padding-top: 20px;
 }
 
-.navbarCustomized{
+.navbarCustomized {
     background-color: white;
-    background-image: none; /* moet ook gebeuren anders zie je de witte achtergrond niet*/
+    background-image: none; /* moet ook gebeuren anders zie je de witte achtergrond niet, Bootstrap image verwijderen*/
     border-color: white;
 }
 
 /* remove shadow from buttons in navbar*/
-.navbar-inverse .navbar-brand, .navbar-inverse .navbar-nav > li > a{
+.navbar-inverse .navbar-brand,
+.navbar-inverse .navbar-nav > li > a {
     text-shadow: 0 1px 0; /*Syntax: h-shadow v-shadow blur*/
     color: dimgray;
 }
 
-.navbar-inverse .navbar-nav > li > a:hover{
-    background-color:dimgrey;
+.navbar-inverse .navbar-nav > li > a:hover {
+    background-color: dimgrey;
     color: white;
 }
 
 /*hamburger achtergrond zwart zodat je hem ziet*/
-.navbar-inverse .navbar-toggle{
+.navbar-inverse .navbar-toggle {
     background-color: black;
 }
 
 /*CSS oplossing om woordje "menu" voor de hamburger te plaatsen als tip*/
 .navbar-toggle:before {
-    content:"Menu";
-    left:-50px;
-    top:4px;
-    position:absolute;
-    width:50px;
+    content: "Menu";
+    left: -50px; /*door -50 te doen komt net voor de hamburger want hij is zelf 50 breed.*/
+    top: 4px;
+    position: absolute; /*via absolute kan je dicht tegen een element verankeren*/
+    width: 50px; /*woord menu is 50px lang*/
 }
 
+/*zoekbalk specifcaties definiëren*/
+.searchTerm {
+    float: left;
+    width: 100%;
+    border: 3px solid #00B4CC;
+    padding: 5px;
+    height: 35px;
+    border-radius: 5px;
+    outline: none;
+    color: #9DBFAF;
+}
+/*well customizen los van bootstrap*/
+.well {
+    padding: 60px; /*hoogte op 60 px*/
+    background-color:#c8f442;
+    background-image: none; /*Bootstrap image verwijderen*/
+    border-color: #c8f442;
+}
 
+/*Als je in de zoekbalk focust wordt de teskt blauw*/
+.searchTerm:focus {
+    color: #00B4CC;
+}
 
+.searchButton {
+    position: absolute;
+    right: -40px;/*plakt tegen het searchveld want hij is zelf 40 breed*/
+    width: 40px;
+    height: 35px;
+    border: 1px solid #00B4CC;
+    background: #00B4CC;
+    text-align: center;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+}
 
+.wrap {
+    position: relative; /*absolute zou iets gemakkelijker zijn maar verspring lichtjes bij resizen, nu niet*/
+    width: 50%; /* de helft zo lang als de well*/
+    bottom: 19px; /*hoogte mooi in het midden van de well*/
+    left: 22.5%; /* breedte mooi in het midden van de well*/
+}
