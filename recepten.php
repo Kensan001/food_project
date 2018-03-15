@@ -46,62 +46,20 @@
                         <span class="icon-bar"></span>
                     </button>
                     <div class="navbar-brand">
-                        <img src="IMG/restaurant_cus.png" class="img-responsive"/>
+                        <img src="IMG/restaurant_cus.png" class="img-responsive" />
                     </div>
 
                 </div>
                 <div class="collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav">
-                        <!--<li class="active"><a href="index.php">HOME</a></li>-->
                         <li><a href="index.php">HOME</a></li>
                         <li><a href="recepten.php">RECEPTEN</a></li>
                     </ul>
                 </div>
             </nav>
         </div>
-
-        <?php //test php WERKT!
-            echo "<h2>PHP is Fun!</h2>";
-            echo "Hello world!<br>";
-            echo "I'm about to learn PHP!<br>";
-        ?>
-
-        <?php // test connectie databank
-            $servername = "localhost:3306";
-            $username = "root";
-            $password = "Kensan1861";
-            $dbname = "food";
-
-            // Create connection
-            $conn = new mysqli($servername, $username, $password, $dbname);
-            // Check connection
-            if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-            }
-
-            //query samenstellen
-            $sql = "select ingredient_Name from ingredient
-            join ingredient_has_measure on ingredient_ingredient_ID = ingredient_ID
-            where ingredient_has_measure_ID = 1";
-            //query uitvoeren
-            $result = $conn->query($sql);
-            //query uitlezen
-            if ($result->num_rows > 0) {
-                // output data of each row
-                while($row = $result->fetch_assoc()) {
-                    echo " - Ingredient Name: " . $row["ingredient_Name"]. "<br>";
-                }
-            } else {
-                echo "0 results";
-            }
-            $conn->close();
-        ?>
     </div>
-
-    <script>
-
-
-    </script>
+    <script></script>
 </body>
 
 <footer> </footer>

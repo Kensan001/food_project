@@ -1,11 +1,56 @@
 @charset "UTF-8";
 /*altijd beginnen met dit in CSS schrijven*/
 
-header {
-
-    width: 100%;
-    height: 120px;
-    background-image: url("../IMG/banner-1559399.jpg");
-    background-size: cover;
-    /*cover: stretcht heel de image over heel de breedte van de webpagina*/
+body{
+    background-color:beige;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
 }
+
+.container{
+    background-color: white;
+
+}
+
+p.TopOfPage{
+    padding-top: 40px;
+}
+
+p.TopOfContainer{
+    padding-top: 20px;
+}
+
+.navbarCustomized{
+    background-color: white;
+    background-image: none; /* moet ook gebeuren anders zie je de witte achtergrond niet*/
+    border-color: white;
+}
+
+/* remove shadow from buttons in navbar*/
+.navbar-inverse .navbar-brand, .navbar-inverse .navbar-nav > li > a{
+    text-shadow: 0 1px 0; /*Syntax: h-shadow v-shadow blur*/
+    color: dimgray;
+}
+
+.navbar-inverse .navbar-nav > li > a:hover{
+    background-color:dimgrey;
+    color: white;
+}
+
+/*hamburger achtergrond zwart zodat je hem ziet*/
+.navbar-inverse .navbar-toggle{
+    background-color: black;
+}
+
+/*CSS oplossing om woordje "menu" voor de hamburger te plaatsen als tip*/
+.navbar-toggle:before {
+    content:"Menu";
+    left:-50px;
+    top:4px;
+    position:absolute;
+    width:50px;
+}
+
+
+
+
