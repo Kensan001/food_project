@@ -32,6 +32,11 @@ p.TopOfContainer {
     color: dimgray;
 }
 
+/*als je met de tab erover ging was het nog wit (niet leesbaar), vandaar deze extra css*/
+.navbar-inverse .navbar-nav > li > a:focus{
+    color: black;
+}
+
 .navbar-inverse .navbar-nav > li > a:hover {
     background-color: dimgrey;
     color: white;
@@ -94,4 +99,20 @@ p.TopOfContainer {
     width: 50%; /* de helft zo lang als de well*/
     bottom: 19px; /*hoogte mooi in het midden van de well*/
     left: 22.5%; /* breedte mooi in het midden van de well*/
+}
+
+.dropdown-toggle {
+    overflow: hidden;
+    text-align: left;
+    width: 100%;
+    background-color: #00B4CC;
+    background-image: none;
+    font-size: 16px;
+    border: 1px solid #00B4CC;
+}
+
+.panel-default{
+    height: 40px;
+    text-align: center;
+    border: 3px solid #00B4CC;
 }
