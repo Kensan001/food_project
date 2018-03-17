@@ -74,171 +74,226 @@ if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
                 </nav>
             </div>
 
-            <div class="well">
-                <!-- wrap div om gemakkelijk het geheel van de zoekbar & button te restylen in css  -->
-                <div class="wrap">
-                    <input type="text" class="searchTerm" placeholder="Zoek...">
-                    <button type="submit" class="searchButton">
-                    <i class="fa fa-search"></i> <!-- search icon bootstrap -->
-                </button>
+            <!-- deze row maakt dat de well over de volledige breedte van de container gespreid wordt -->
+            <div class="row">
+                <div class="well">
+                    <!-- wrap div om gemakkelijk het geheel van de zoekbar & button te restylen in css  -->
+                    <div class="wrap">
+                        <form action="recepten.php" method="post">
+                            <!-- PHP POST -->
+                            <input type="text" class="searchTerm" name="trefwoord" placeholder="Zoek">
+                            <button type="submit" class="searchButton">
+                            <i class="fa fa-search"></i> <!-- search icon bootstrap -->
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <div class="panel panel-default">
-                <div class="panel-body">Verdere zoekopties</div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-3">
-                    <!-- Theme -->
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Gelegenheid...
+            <!-- de dropdowns grouperen in een sectie om te stylen met border in css -->
+            <section>
+                <div class="row">
+                    <div class="col-md-3">
+                        <!-- Theme -->
+                        <div class="icon">
+                            <img src="IMG/toast_cus.png" class="img-responsive" />
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Gelegenheid
                         <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <?php
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <?php
                         $dropdown=mysqli_query ($conn,'select * from food.theme');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
-                                    <a value="<?php echo $row['theme_ID'];?>">
-                                        <?php echo $row['theme_Description'];?>
-                                    </a>
-                                    <?php
+                                        <a value="<?php echo $row['theme_ID'];?>">
+                                            <?php echo $row['theme_Description'];?>
+                                        </a>
+                                        <?php
                         }
                         ?>
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-3">
-                    <!-- Kitchen-->
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Keuken...
+                    <div class="col-md-3">
+                        <!-- Kitchen-->
+                        <div class="icon">
+                            <img src="IMG/italy_cus.png" class="img-responsive" />
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Keuken
                         <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <?php
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <?php
                         $dropdown=mysqli_query ($conn,'select * from food.kitchen');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
-                                    <a value="<?php echo $row['kitchen_ID'];?>">
-                                        <?php echo $row['kitchen_Description'];?>
-                                    </a>
-                                    <?php
+                                        <a value="<?php echo $row['kitchen_ID'];?>">
+                                            <?php echo $row['kitchen_Description'];?>
+                                        </a>
+                                        <?php
                         }
                         ?>
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-3">
-                    <!-- Categorie-->
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Categorie...
+                    <div class="col-md-3">
+                        <!-- Categorie-->
+                        <div class="icon">
+                            <img src="IMG/meat_cus.png" class="img-responsive" />
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Categorie
                         <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <?php
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <?php
                         $dropdown=mysqli_query ($conn,'select * from food.category');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
-                                    <a value="<?php echo $row['category_ID'];?>">
-                                        <?php echo $row['category_Name'];?>
-                                    </a>
-                                    <?php
+                                        <a value="<?php echo $row['category_ID'];?>">
+                                            <?php echo $row['category_Name'];?>
+                                        </a>
+                                        <?php
                         }
                         ?>
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-3">
-                    <!-- Seizoen-->
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Seizoen...
+                    <div class="col-md-3">
+                        <!-- Seizoen-->
+                        <div class="iconSeizoen">
+                            <img src="IMG/leaf_cus.png" class="img-responsive" />
+                        </div>
+                        <div class="dropdown">
+
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Seizoen
                         <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <?php
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <?php
                         $dropdown=mysqli_query ($conn,'select * from food.season');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
-                                    <a value="<?php echo $row['season_ID'];?>">
-                                        <?php echo $row['season_Description'];?>
-                                    </a>
-                                    <?php
+                                        <a value="<?php echo $row['season_ID'];?>">
+                                            <?php echo $row['season_Description'];?>
+                                        </a>
+                                        <?php
                         }
                         ?>
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <br>
+                <br>
 
-            <div class="row">
-                <div class="col-md-3">
-                    <!-- Type gerecht-->
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Gerecht...
+                <div class="row">
+                    <div class="col-md-3">
+                        <!-- Type gerecht-->
+                        <div class="icon">
+                            <img src="IMG/cutlery_cus.png" class="img-responsive" />
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Gerecht
                         <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <?php
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <?php
                         $dropdown=mysqli_query ($conn,'select * from food.course');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
-                                    <a value="<?php echo $row['course_ID'];?>">
-                                        <?php echo $row['course_Description'];?>
-                                    </a>
-                                    <?php
+                                        <a value="<?php echo $row['course_ID'];?>">
+                                            <?php echo $row['course_Description'];?>
+                                        </a>
+                                        <?php
                         }
                         ?>
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-3">
-                    <!-- Moeilijkheid-->
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Moeilijkheid...
+                    <div class="col-md-3">
+                        <!-- Moeilijkheid-->
+                        <div class="icon">
+                            <img src="IMG/sweat_cus.png" class="img-responsive" />
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Moeilijkheid
                         <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a>Gemakkelijk</a></li>
-                            <li><a>Gemiddeld</a></li>
-                            <li><a>Moeilijk</a></li>
-                        </ul>
+                            <ul class="dropdown-menu">
+                                <li><a>Gemakkelijk</a></li>
+                                <li><a>Gemiddeld</a></li>
+                                <li><a>Moeilijk</a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-md-3">
-                    <!-- Duur-->
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Duur...
+                    <div class="col-md-3">
+                        <!-- Duur-->
+                        <div class="icon">
+                            <img src="IMG/circular-clock_cus.png" class="img-responsive" />
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Duur
                         <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a>1+uur</a></li>
-                            <li><a>10-20 min</a></li>
-                            <li><a>12+uur</a></li>
-                            <li><a>2+uur</a></li>
-                            <li><a>20-30min</a></li>
-                            <li><a>24+uur</a></li>
-                            <li><a>3+uur</a></li>
-                            <li><a>30min-1uur</a></li>
-                            <li><a>5-10min</a></li>
-                            <li><a>6+uur</a></li>
-                        </ul>
+                            <ul class="dropdown-menu">
+                                <li><a>1+uur</a></li>
+                                <li><a>10-20 min</a></li>
+                                <li><a>12+uur</a></li>
+                                <li><a>2+uur</a></li>
+                                <li><a>20-30min</a></li>
+                                <li><a>24+uur</a></li>
+                                <li><a>3+uur</a></li>
+                                <li><a>30min-1uur</a></li>
+                                <li><a>5-10min</a></li>
+                                <li><a>6+uur</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
+            </section>
 
+            <!-- database bevragen op basis van enkel trefwoord - WORKING - and tonen in responsive grid -->
+            <div class="resultQuery">
+                <div class="row">
+                    <?php
+                        if (!empty($_POST['trefwoord'])) {
+                        $trefwoord = mysqli_real_escape_string($conn, $_POST['trefwoord']);
+                        $query = "SELECT * FROM food.recipe WHERE recipe_Name LIKE '%".$trefwoord."%' ORDER BY recipe_Name";
+                        $result = mysqli_query($conn,$query);
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
 
+                        <div class="col-md-3 mdStyle">
+                            <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                            <?php echo $row['recipe_Name']; ?>
+                        </div>
 
+                        <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($conn);
+                        } ?>
+                </div>
             </div>
+
+
+
+
+
 
 
 

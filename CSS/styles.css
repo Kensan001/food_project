@@ -101,18 +101,47 @@ p.TopOfContainer {
     left: 22.5%; /* breedte mooi in het midden van de well*/
 }
 
+/* styling van alle 7 dropdown buttons*/
 .dropdown-toggle {
     overflow: hidden;
     text-align: left;
-    width: 100%;
-    background-color: #00B4CC;
+    width: 96%;
+    background-color: white;
     background-image: none;
     font-size: 16px;
     border: 1px solid #00B4CC;
+    color:#769b04;
+
+}
+/* styling van de sectie van de 7 dropdown buttons = groeperen*/
+section{
+    border: 2px solid #00B4CC;
+    background: #00B4CC;
+    padding: 40px;
 }
 
-.panel-default{
-    height: 40px;
-    text-align: center;
-    border: 3px solid #00B4CC;
+/* styling van 6 van de 7 iconen*/
+.icon{
+    position: absolute;
+    left: -15px;/*plakt tegen de dropdown links*/
+    top:4px; /* beetje naar beneden*/
 }
+
+/* styling van icoon seizoen apart wegens iets smallere afbeelding*/
+.iconSeizoen{
+    position: absolute;
+    left: -11px;/*plakt tegen de dropdown links*/
+    top: 4px /* beetje naar beneden*/
+}
+
+.table-responsive{
+    padding-top: 25px;
+
+}
+
+.mdStyle {
+    width: 290px;
+    height: 340px;
+    padding-top: 40px;
+}
+
