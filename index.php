@@ -105,30 +105,3 @@
 
 </HTML>
 
-
-<!-- back up working code -->
-
-<div class="table-responsive">
-                <table class="table">
-                    <tbody>
-                        <?php
-                        if (!empty($_POST['trefwoord'])) {
-                            $trefwoord = mysqli_real_escape_string($conn, $_POST['trefwoord']);
-                            $query = "SELECT * FROM food.recipe WHERE recipe_Name LIKE '%".$trefwoord."%'";
-                            $result = mysqli_query($conn,$query);
-                            if ($result->num_rows > 0) {
-                            while ($row = mysqli_fetch_array($result)){ ?>
-                            <td>
-                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                <?php echo $row['recipe_Name']; ?>
-                            </td>
-                            <?php }
-                            } else {
-                                echo "Geen resultaten gevonden.";
-                            }
-                            mysqli_close($conn);
-                            } ?>
-                    </tbody>
-                </table>
-            </div>
-

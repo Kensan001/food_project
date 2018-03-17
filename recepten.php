@@ -1,16 +1,38 @@
 <?php
 
-$servername = "localhost:3306";
-$username = "root";
-$password = "Kensan1861";
-$dbname = "food";
+//$servername = "localhost:3306";
+//$username = "root";
+//$password = "Kensan1861";
+//$dbname = "food";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+//$conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
-if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
-    die("Connection failed: " . $conn->connect_error);
-}
+//if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
+//    die("Connection failed: " . $conn->connect_error);
+//}
+
+    function db_connect() {
+
+        // Define connection as a static variable, to avoid connecting more than once
+        static $connection;
+
+        // Try and connect to the database, if a connection has not been established yet
+        if(!isset($connection)) {
+             // Load configuration as an array. Use the actual location of your configuration file
+            $config = parse_ini_file('C:\wamp64\www\brackets\Projectwerk\config.ini');
+            $connection = mysqli_connect('localhost:3306',$config['username'],$config['password'],$config['dbname']);
+        }
+
+        // If connection was not successful, handle the error
+        if($connection == false) {
+            // Handle error - notify administrator, log to a file, show an error screen, etc.
+            return mysqli_connect_error();
+        }
+        return $connection;
+    }
+$connection = db_connect();
+
 ?>
 
     <!DOCTYPE html >
@@ -80,7 +102,6 @@ if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
                     <!-- wrap div om gemakkelijk het geheel van de zoekbar & button te restylen in css  -->
                     <div class="wrap">
                         <form action="recepten.php" method="post">
-                            <!-- PHP POST -->
                             <input type="text" class="searchTerm" name="trefwoord" placeholder="Zoek">
                             <button type="submit" class="searchButton">
                             <i class="fa fa-search"></i> <!-- search icon bootstrap -->
@@ -105,7 +126,7 @@ if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($conn,'select * from food.theme');
+                        $dropdown=mysqli_query ($connection,'select * from food.theme');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
                                         <a value="<?php echo $row['theme_ID'];?>">
@@ -130,7 +151,7 @@ if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($conn,'select * from food.kitchen');
+                        $dropdown=mysqli_query ($connection,'select * from food.kitchen');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
                                         <a value="<?php echo $row['kitchen_ID'];?>">
@@ -155,7 +176,7 @@ if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($conn,'select * from food.category');
+                        $dropdown=mysqli_query ($connection,'select * from food.category');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
                                         <a value="<?php echo $row['category_ID'];?>">
@@ -181,7 +202,7 @@ if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($conn,'select * from food.season');
+                        $dropdown=mysqli_query ($connection,'select * from food.season');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
                                         <a value="<?php echo $row['season_ID'];?>">
@@ -210,7 +231,7 @@ if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($conn,'select * from food.course');
+                        $dropdown=mysqli_query ($connection,'select * from food.course');
                         while($row=mysqli_fetch_assoc($dropdown)){
                         ?>
                                         <a value="<?php echo $row['course_ID'];?>">
@@ -270,9 +291,9 @@ if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
                 <div class="row">
                     <?php
                         if (!empty($_POST['trefwoord'])) {
-                        $trefwoord = mysqli_real_escape_string($conn, $_POST['trefwoord']);
+                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
                         $query = "SELECT * FROM food.recipe WHERE recipe_Name LIKE '%".$trefwoord."%' ORDER BY recipe_Name";
-                        $result = mysqli_query($conn,$query);
+                        $result = mysqli_query($connection,$query);
                         if ($result->num_rows > 0) {
                         while ($row = mysqli_fetch_array($result)){ ?>
 
@@ -285,46 +306,13 @@ if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
                         } else {
                             echo "Geen resultaten gevonden.";
                         }
-                        mysqli_close($conn);
+                        mysqli_close($connection);
                         } ?>
                 </div>
             </div>
 
 
 
-
-
-
-
-
-
-
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
             <br>
             <br>
             <br>
