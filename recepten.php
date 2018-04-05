@@ -1,17 +1,6 @@
 <?php
 
-//$servername = "localhost:3306";
-//$username = "root";
-//$password = "Kensan1861";
-//$dbname = "food";
-
-// Create connection
-//$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-//if ($conn->connect_error) { // "if (!$conn)" kan ook ipv connect_error
-//    die("Connection failed: " . $conn->connect_error);
-//}
-
+// functie connect()
     function db_connect() {
 
         // Define connection as a static variable, to avoid connecting more than once
@@ -31,8 +20,10 @@
         }
         return $connection;
     }
+// variabele om op te roepen voor de queries
 $connection = db_connect();
-
+// charset toevoegen om alle speciale karakters uit de queries te ondersteunen.
+$connection->set_charset("utf8");
 ?>
 
     <!DOCTYPE html >
@@ -41,10 +32,10 @@ $connection = db_connect();
     <HTML>
 
     <head>
-
         <title>
             Home
         </title>
+        <meta charset="UTF-8">
         <!-- css -->
         <!-- 2 style sheets voor css -->
         <link rel="stylesheet" href="LIB/bootstrap-3.3.6/css/bootstrap.min.css">
@@ -103,6 +94,9 @@ $connection = db_connect();
                     <div class="wrap">
                         <form action="recepten.php" method="post">
                             <input type="text" class="searchTerm" name="trefwoord" placeholder="Zoek">
+                            <div class="unhide">
+                                <input type="text" id="seizoenText" name="seizoen">
+                            </div>
                             <button type="submit" class="searchButton">
                             <i class="fa fa-search"></i> <!-- search icon bootstrap -->
                             </button>
@@ -192,28 +186,29 @@ $connection = db_connect();
 
                     <div class="col-md-3">
                         <!-- Seizoen-->
-                        <div class="iconSeizoen">
+                        <div class="icon">
                             <img src="IMG/leaf_cus.png" class="img-responsive" />
                         </div>
-                        <div class="dropdown">
-
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Seizoen
+                        <div class="dropdownSeizoen">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="seizoen">Seizoen
                         <span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($connection,'select * from food.season');
-                        while($row=mysqli_fetch_assoc($dropdown)){
-                        ?>
+                                        $query=mysqli_query ($connection,'select * from food.season');
+                                        while($row=mysqli_fetch_assoc($query)){
+                                        ?>
                                         <a value="<?php echo $row['season_ID'];?>">
                                             <?php echo $row['season_Description'];?>
                                         </a>
                                         <?php
-                        }
-                        ?>
+                                            }
+                                            ?>
                                 </li>
                             </ul>
                         </div>
+
+
                     </div>
                 </div>
 
@@ -289,30 +284,38 @@ $connection = db_connect();
             <!-- database bevragen op basis van enkel trefwoord - WORKING - and tonen in responsive grid -->
             <div class="resultQuery">
                 <div class="row">
+                    <!-- CASE 1: indien enkel het trefwoord (zoekveld) is ingevuld -->
                     <?php
                         if (!empty($_POST['trefwoord'])) {
                         $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $query = "SELECT * FROM food.recipe WHERE recipe_Name LIKE '%".$trefwoord."%' ORDER BY recipe_Name";
+                        $seizoen = mysqli_real_escape_string($connection, $_POST['seizoen']);
+
+                        //$query = "SELECT * FROM food.recipe WHERE recipe_Name LIKE '%".$trefwoord."%' AND season_season_ID1 = '5' ORDER BY recipe_Name";
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.season ON season_season_ID1 = season_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND season_Description = '$seizoen'";
+
                         $result = mysqli_query($connection,$query);
                         if ($result->num_rows > 0) {
                         while ($row = mysqli_fetch_array($result)){ ?>
 
-                        <div class="col-md-3 mdStyle">
-                            <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                            <?php echo $row['recipe_Name']; ?>
-                        </div>
+                    <div class="col-md-3 mdStyle">
+                        <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                        <?php echo $row['recipe_Name']; ?>
+                    </div>
 
-                        <?php }
+                    <?php }
                         } else {
                             echo "Geen resultaten gevonden.";
                         }
                         mysqli_close($connection);
                         } ?>
+
+
                 </div>
             </div>
 
 
 
+
             <br>
             <br>
             <br>
@@ -330,32 +333,33 @@ $connection = db_connect();
             <br>
             <br>
 
-
-            <div class="select">
-                <select name="categorie">
-                <option value="">--- Select ---</option>
-                    <?php
-                        //require('myConn.php'); TODO !!!
-                        $dropdown=mysqli_query ($conn,'select * from food.theme');
-                        while($row=mysqli_fetch_assoc($dropdown)){
-                    ?>
-                <option value="<?php echo $row['theme_ID'];?>">
-                    <?php echo $row['theme_Description'];?>
-                </option>
-                <?php
-                    }
-                ?>
-            </select>
-            </div>
         </div>
 
-
+        <!-- de dropdown selectie vasthouden in de 7 bootstrap comboboxen-->
         <script>
             $(document).ready(function() {
                 $('.dropdown').each(function(key, dropdown) {
                     var $dropdown = $(dropdown);
                     $dropdown.find('.dropdown-menu a').on('click', function() {
                         $dropdown.find('button').text($(this).text()).append(' <span class="caret"></span>');
+                    });
+                });
+            });
+
+        </script>
+
+        <!-- Dropdown seizoen-->
+        <script>
+            $(document).ready(function() {
+                $('.dropdownSeizoen').each(function(key, dropdown) {
+                    var $dropdown = $(dropdown); // = data-toggle "dropdown"
+                    $dropdown.find('.dropdown-menu a').on('click', function() {
+                        $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
+                        $('#seizoenText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
+
+                        // test message box
+                        //var szn = $dropdown.find('button').text();
+                        //alert(szn); // test met messagebox => hij zit erin !
                     });
                 });
             });
