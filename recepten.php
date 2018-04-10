@@ -95,7 +95,12 @@ $connection->set_charset("utf8");
                         <form action="recepten.php" method="post">
                             <input type="text" class="searchTerm" name="trefwoord" placeholder="Zoek">
                             <div class="unhide">
+                                <input type="text" id="categorieText" name="categorie">
                                 <input type="text" id="seizoenText" name="seizoen">
+                                <input type="text" id="keukenText" name="keuken">
+                                <input type="text" id="gelegenheidText" name="gelegenheid">
+                                <input type="text" id="gerechtText" name="gerecht">
+                                <input type="text" id="moeilijkheidText" name="moeilijkheid">
                             </div>
                             <button type="submit" class="searchButton">
                             <i class="fa fa-search"></i> <!-- search icon bootstrap -->
@@ -114,14 +119,14 @@ $connection->set_charset("utf8");
                         <div class="icon">
                             <img src="IMG/toast_cus.png" class="img-responsive" />
                         </div>
-                        <div class="dropdown">
+                        <div class="dropdownGelegenheid">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Gelegenheid
                         <span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($connection,'select * from food.theme');
-                        while($row=mysqli_fetch_assoc($dropdown)){
+                        $query=mysqli_query ($connection,'select * from food.theme');
+                        while($row=mysqli_fetch_assoc($query)){
                         ?>
                                         <a value="<?php echo $row['theme_ID'];?>">
                                             <?php echo $row['theme_Description'];?>
@@ -139,14 +144,14 @@ $connection->set_charset("utf8");
                         <div class="icon">
                             <img src="IMG/italy_cus.png" class="img-responsive" />
                         </div>
-                        <div class="dropdown">
+                        <div class="dropdownKeuken">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Keuken
                         <span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($connection,'select * from food.kitchen');
-                        while($row=mysqli_fetch_assoc($dropdown)){
+                        $query=mysqli_query ($connection,'select * from food.kitchen');
+                        while($row=mysqli_fetch_assoc($query)){
                         ?>
                                         <a value="<?php echo $row['kitchen_ID'];?>">
                                             <?php echo $row['kitchen_Description'];?>
@@ -164,21 +169,21 @@ $connection->set_charset("utf8");
                         <div class="icon">
                             <img src="IMG/meat_cus.png" class="img-responsive" />
                         </div>
-                        <div class="dropdown">
+                        <div class="dropdownCategorie">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Categorie
                         <span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($connection,'select * from food.category');
-                        while($row=mysqli_fetch_assoc($dropdown)){
-                        ?>
+                                    $query=mysqli_query ($connection,'select * from food.category');
+                                    while($row=mysqli_fetch_assoc($query)){
+                                    ?>
                                         <a value="<?php echo $row['category_ID'];?>">
                                             <?php echo $row['category_Name'];?>
                                         </a>
                                         <?php
-                        }
-                        ?>
+                                            }
+                                            ?>
                                 </li>
                             </ul>
                         </div>
@@ -190,7 +195,7 @@ $connection->set_charset("utf8");
                             <img src="IMG/leaf_cus.png" class="img-responsive" />
                         </div>
                         <div class="dropdownSeizoen">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="seizoen">Seizoen
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Seizoen
                         <span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <li>
@@ -220,14 +225,14 @@ $connection->set_charset("utf8");
                         <div class="icon">
                             <img src="IMG/cutlery_cus.png" class="img-responsive" />
                         </div>
-                        <div class="dropdown">
+                        <div class="dropdownGerecht">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Gerecht
                         <span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <li>
                                     <?php
-                        $dropdown=mysqli_query ($connection,'select * from food.course');
-                        while($row=mysqli_fetch_assoc($dropdown)){
+                        $query=mysqli_query ($connection,'select * from food.course');
+                        while($row=mysqli_fetch_assoc($query)){
                         ?>
                                         <a value="<?php echo $row['course_ID'];?>">
                                             <?php echo $row['course_Description'];?>
@@ -245,7 +250,7 @@ $connection->set_charset("utf8");
                         <div class="icon">
                             <img src="IMG/sweat_cus.png" class="img-responsive" />
                         </div>
-                        <div class="dropdown">
+                        <div class="dropdownMoeilijkheid">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Moeilijkheid
                         <span class="caret"></span></button>
                             <ul class="dropdown-menu">
@@ -281,28 +286,298 @@ $connection->set_charset("utf8");
                 </div>
             </section>
 
-            <!-- database bevragen op basis van enkel trefwoord - WORKING - and tonen in responsive grid -->
+            <!-- database bevragen en resultaten weergeven -->
             <div class="resultQuery">
                 <div class="row">
-                    <!-- CASE 1: indien enkel het trefwoord (zoekveld) is ingevuld -->
-                    <?php
-                        if (!empty($_POST['trefwoord'])) {
+
+                    <?php //CASE 1: indien enkel trefwoord (zoekveld) is ingevuld (TODO VERDER AFWERKEN VOOR 3 COMBO'S !!!)
+                        if (!empty($_POST['trefwoord'])&&(empty($_POST ['gelegenheid'])&&(empty($_POST ['keuken'])&&(empty($_POST ['categorie'])&&(empty($_POST ['seizoen'])&&(empty($_POST ['gerecht'])&&(empty($_POST ['moeilijkheid'])))))))) {
+
                         $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $seizoen = mysqli_real_escape_string($connection, $_POST['seizoen']);
-
-                        //$query = "SELECT * FROM food.recipe WHERE recipe_Name LIKE '%".$trefwoord."%' AND season_season_ID1 = '5' ORDER BY recipe_Name";
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.season ON season_season_ID1 = season_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND season_Description = '$seizoen'";
-
+                        $query = "SELECT * FROM food.recipe WHERE recipe_Name LIKE '%".$trefwoord."%'";
                         $result = mysqli_query($connection,$query);
+
                         if ($result->num_rows > 0) {
                         while ($row = mysqli_fetch_array($result)){ ?>
 
-                    <div class="col-md-3 mdStyle">
-                        <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                        <?php echo $row['recipe_Name']; ?>
-                    </div>
+                                <div class="col-md-3 mdStyle">
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                    <?php echo $row['recipe_Name']; ?>
+                                </div>
 
-                    <?php }
+                                <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 2: indien het trefwoord (zoekveld) leeg is EN enkel een SEIZOEN werd geselecteerd
+                        if (empty($_POST['trefwoord']) && (!empty($_POST ['seizoen']))) {
+
+                        $seizoen = mysqli_real_escape_string($connection, $_POST['seizoen']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.season ON season_season_ID1 = season_ID WHERE season_Description = '$seizoen'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                        <div class="col-md-3 mdStyle">
+                            <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                            <?php echo $row['recipe_Name']; ?>
+                        </div>
+
+                        <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 3: indien het trefwoord (zoekveld) leeg is EN enkel een CATEGORIE werd geselecteerd
+                        if (empty($_POST['trefwoord']) && (!empty($_POST ['categorie']))) {
+
+                        $categorie = mysqli_real_escape_string($connection, $_POST['categorie']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.category ON category_category_ID1 = category_ID WHERE category_Name = '$categorie'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                            <div class="col-md-3 mdStyle">
+                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                <?php echo $row['recipe_Name']; ?>
+                            </div>
+
+                            <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 4: indien het trefwoord (zoekveld) leeg is EN enkel een KEUKEN werd geselecteerd
+                        if (empty($_POST['trefwoord']) && (!empty($_POST ['keuken']))) {
+
+                        $keuken = mysqli_real_escape_string($connection, $_POST['keuken']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.kitchen ON kitchen_kitchen_ID1 = kitchen_ID WHERE kitchen_Description = '$keuken'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                            <div class="col-md-3 mdStyle">
+                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                <?php echo $row['recipe_Name']; ?>
+                            </div>
+
+                            <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 5: indien het trefwoord (zoekveld) leeg is EN enkel een GELEGENHEID werd geselecteerd
+                        if (empty($_POST['trefwoord']) && (!empty($_POST ['gelegenheid']))) {
+
+                        $gelegenheid = mysqli_real_escape_string($connection, $_POST['gelegenheid']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.theme ON theme_theme_ID1 = theme_ID WHERE theme_Description = '$gelegenheid'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                            <div class="col-md-3 mdStyle">
+                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                <?php echo $row['recipe_Name']; ?>
+                            </div>
+
+                            <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 6: indien het trefwoord (zoekveld) leeg is EN enkel een GERECHT werd geselecteerd
+                        if (empty($_POST['trefwoord']) && (!empty($_POST ['gerecht']))) {
+
+                        $gerecht = mysqli_real_escape_string($connection, $_POST['gerecht']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.course ON course_course_ID1 = course_ID WHERE course_Description = '$gerecht'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                            <div class="col-md-3 mdStyle">
+                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                <?php echo $row['recipe_Name']; ?>
+                            </div>
+
+                            <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 7: indien het trefwoord (zoekveld) leeg is EN enkel een MOEILIJKHEID werd geselecteerd
+                        if (empty($_POST['trefwoord']) && (!empty($_POST ['moeilijkheid']))) {
+
+                        $moeilijkheid = mysqli_real_escape_string($connection, $_POST['moeilijkheid']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID WHERE instruction_Difficulty = '$moeilijkheid'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                            <div class="col-md-3 mdStyle">
+                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                <?php echo $row['recipe_Name']; ?>
+                            </div>
+
+                            <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 8: indien het trefwoord (zoekveld) is ingevuld EN een SEIZOEN werd geselecteerd
+                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['seizoen']))) {
+
+                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
+                        $seizoen = mysqli_real_escape_string($connection, $_POST['seizoen']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.season ON season_season_ID1 = season_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND season_Description = '$seizoen'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                                <div class="col-md-3 mdStyle">
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                    <?php echo $row['recipe_Name']; ?>
+                                </div>
+
+                                <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 9: indien het trefwoord (zoekveld) is ingevuld EN een CATEGORIE werd geselecteerd
+                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['categorie']))) {
+
+                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
+                        $categorie = mysqli_real_escape_string($connection, $_POST['categorie']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.category ON category_category_ID1 = category_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND category_Name = '$categorie'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                                <div class="col-md-3 mdStyle">
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                    <?php echo $row['recipe_Name']; ?>
+                                </div>
+
+                                <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 10: indien het trefwoord (zoekveld) is ingevuld EN een KEUKEN werd geselecteerd
+                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['keuken']))) {
+
+                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
+                        $keuken = mysqli_real_escape_string($connection, $_POST['keuken']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.kitchen ON kitchen_kitchen_ID1 = kitchen_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND kitchen_Description = '$keuken'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                                <div class="col-md-3 mdStyle">
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                    <?php echo $row['recipe_Name']; ?>
+                                </div>
+
+                                <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php // CASE 11: indien het trefwoord (zoekveld) is ingevuld EN een GELEGENHEID werd geselecteerd
+                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['gelegenheid']))) {
+
+                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
+                        $gelegenheid = mysqli_real_escape_string($connection, $_POST['gelegenheid']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.theme ON theme_theme_ID1 = theme_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND theme_Description = '$gelegenheid'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                                <div class="col-md-3 mdStyle">
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                    <?php echo $row['recipe_Name']; ?>
+                                </div>
+
+                                <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php // CASE 12: indien het trefwoord (zoekveld) is ingevuld EN een GERECHT werd geselecteerd
+                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['gerecht']))) {
+
+                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
+                        $gerecht = mysqli_real_escape_string($connection, $_POST['gerecht']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.course ON course_course_ID1 = course_ID WHERE recipe_Name LIKE '%".$trefwoord."%'
+                        AND course_Description = '$gerecht'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                                <div class="col-md-3 mdStyle">
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                    <?php echo $row['recipe_Name']; ?>
+                                </div>
+
+                                <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php // CASE 13: indien het trefwoord (zoekveld) is ingevuld EN een MOEILIJKHEID werd geselecteerd
+                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['moeilijkheid']))) {
+
+                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
+                        $moeilijkheid = mysqli_real_escape_string($connection, $_POST['moeilijkheid']);
+                        $query = "SELECT * FROM food.recipe  INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID WHERE recipe_Name LIKE '%".$trefwoord."%'
+                        AND instruction_Difficulty = '$moeilijkheid'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                                <div class="col-md-3 mdStyle">
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                    <?php echo $row['recipe_Name']; ?>
+                                </div>
+
+                                <?php }
                         } else {
                             echo "Geen resultaten gevonden.";
                         }
@@ -310,16 +585,10 @@ $connection->set_charset("utf8");
                         } ?>
 
 
+
                 </div>
             </div>
 
-
-
-
-            <br>
-            <br>
-            <br>
-            <br>
             <br>
             <br>
             <br>
@@ -348,7 +617,46 @@ $connection->set_charset("utf8");
 
         </script>
 
-        <!-- Dropdown seizoen-->
+        <!-- Dropdown Gelegenheid-->
+        <script>
+            $(document).ready(function() {
+                $('.dropdownGelegenheid').each(function(key, dropdown) {
+                    var $dropdown = $(dropdown); // = data-toggle "dropdown"
+                    $dropdown.find('.dropdown-menu a').on('click', function() {
+                        $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
+                        $('#gelegenheidText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
+                    });
+                });
+            });
+        </script>
+
+        <!-- Dropdown Keuken-->
+        <script>
+            $(document).ready(function() {
+                $('.dropdownKeuken').each(function(key, dropdown) {
+                    var $dropdown = $(dropdown); // = data-toggle "dropdown"
+                    $dropdown.find('.dropdown-menu a').on('click', function() {
+                        $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
+                        $('#keukenText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
+                    });
+                });
+            });
+        </script>
+
+        <!-- Dropdown Categorie-->
+        <script>
+            $(document).ready(function() {
+                $('.dropdownCategorie').each(function(key, dropdown) {
+                    var $dropdown = $(dropdown); // = data-toggle "dropdown"
+                    $dropdown.find('.dropdown-menu a').on('click', function() {
+                        $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
+                        $('#categorieText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
+                    });
+                });
+            });
+        </script>
+
+        <!-- Dropdown Seizoen-->
         <script>
             $(document).ready(function() {
                 $('.dropdownSeizoen').each(function(key, dropdown) {
@@ -356,14 +664,38 @@ $connection->set_charset("utf8");
                     $dropdown.find('.dropdown-menu a').on('click', function() {
                         $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
                         $('#seizoenText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
-
-                        // test message box
+                        // TEST met MSGBOX
                         //var szn = $dropdown.find('button').text();
                         //alert(szn); // test met messagebox => hij zit erin !
                     });
                 });
             });
+        </script>
 
+        <!-- Dropdown Gerecht-->
+        <script>
+            $(document).ready(function() {
+                $('.dropdownGerecht').each(function(key, dropdown) {
+                    var $dropdown = $(dropdown); // = data-toggle "dropdown"
+                    $dropdown.find('.dropdown-menu a').on('click', function() {
+                        $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
+                        $('#gerechtText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
+                    });
+                });
+            });
+        </script>
+
+        <!-- Dropdown Moeilijkheid-->
+        <script>
+            $(document).ready(function() {
+                $('.dropdownMoeilijkheid').each(function(key, dropdown) {
+                    var $dropdown = $(dropdown); // = data-toggle "dropdown"
+                    $dropdown.find('.dropdown-menu a').on('click', function() {
+                        $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
+                        $('#moeilijkheidText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
+                    });
+                });
+            });
         </script>
 
 
