@@ -94,6 +94,7 @@ $connection->set_charset("utf8");
                     <div class="wrap">
                         <form action="recepten.php" method="post">
                             <input type="text" class="searchTerm" name="trefwoord" placeholder="Zoek">
+                            <!-- al deze input velden slaan de waarde van de dropdown selectie op voor verdere POST actie, deze tekstvelden worden gehide via class "hide"-->
                             <div class="unhide">
                                 <input type="text" id="categorieText" name="categorie">
                                 <input type="text" id="seizoenText" name="seizoen">
@@ -101,6 +102,7 @@ $connection->set_charset("utf8");
                                 <input type="text" id="gelegenheidText" name="gelegenheid">
                                 <input type="text" id="gerechtText" name="gerecht">
                                 <input type="text" id="moeilijkheidText" name="moeilijkheid">
+                                <input type="text" id="duurText" name="duur">
                             </div>
                             <button type="submit" class="searchButton">
                             <i class="fa fa-search"></i> <!-- search icon bootstrap -->
@@ -266,7 +268,7 @@ $connection->set_charset("utf8");
                         <div class="icon">
                             <img src="IMG/circular-clock_cus.png" class="img-responsive" />
                         </div>
-                        <div class="dropdown">
+                        <div class="dropdownDuur">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Duur
                         <span class="caret"></span></button>
                             <ul class="dropdown-menu">
@@ -291,7 +293,7 @@ $connection->set_charset("utf8");
                 <div class="row">
 
                     <?php //CASE 1: indien enkel trefwoord (zoekveld) is ingevuld (TODO VERDER AFWERKEN VOOR 3 COMBO'S !!!)
-                        if (!empty($_POST['trefwoord'])&&(empty($_POST ['gelegenheid'])&&(empty($_POST ['keuken'])&&(empty($_POST ['categorie'])&&(empty($_POST ['seizoen'])&&(empty($_POST ['gerecht'])&&(empty($_POST ['moeilijkheid'])))))))) {
+                        if (!empty($_POST['trefwoord'])&&(empty($_POST ['gelegenheid'])&&(empty($_POST ['keuken'])&&(empty($_POST ['categorie'])&&(empty($_POST ['seizoen'])&&(empty($_POST ['gerecht'])&&(empty($_POST ['moeilijkheid'])&&(empty($_POST ['duur']))))))))) {
 
                         $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
                         $query = "SELECT * FROM food.recipe WHERE recipe_Name LIKE '%".$trefwoord."%'";
@@ -444,7 +446,29 @@ $connection->set_charset("utf8");
                         mysqli_close($connection);
                         } ?>
 
-                        <?php //CASE 8: indien het trefwoord (zoekveld) is ingevuld EN een SEIZOEN werd geselecteerd
+                        <?php //CASE 8: indien het trefwoord (zoekveld) leeg is EN enkel een DUUR werd geselecteerd
+                        if (empty($_POST['trefwoord']) && (!empty($_POST ['duur']))) {
+
+                        $duur = mysqli_real_escape_string($connection, $_POST['duur']);
+                        $query = "SELECT * FROM food.recipe INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID WHERE instruction_Duration = '$duur'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                            <div class="col-md-3 mdStyle">
+                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                <?php echo $row['recipe_Name']; ?>
+                            </div>
+
+                            <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
+
+                        <?php //CASE 9: indien het trefwoord (zoekveld) is ingevuld EN een SEIZOEN werd geselecteerd
                         if (!empty($_POST['trefwoord']) && (!empty($_POST ['seizoen']))) {
 
                         $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
@@ -467,7 +491,7 @@ $connection->set_charset("utf8");
                         mysqli_close($connection);
                         } ?>
 
-                        <?php //CASE 9: indien het trefwoord (zoekveld) is ingevuld EN een CATEGORIE werd geselecteerd
+                        <?php //CASE 10: indien het trefwoord (zoekveld) is ingevuld EN een CATEGORIE werd geselecteerd
                         if (!empty($_POST['trefwoord']) && (!empty($_POST ['categorie']))) {
 
                         $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
@@ -490,7 +514,7 @@ $connection->set_charset("utf8");
                         mysqli_close($connection);
                         } ?>
 
-                        <?php //CASE 10: indien het trefwoord (zoekveld) is ingevuld EN een KEUKEN werd geselecteerd
+                        <?php //CASE 11: indien het trefwoord (zoekveld) is ingevuld EN een KEUKEN werd geselecteerd
                         if (!empty($_POST['trefwoord']) && (!empty($_POST ['keuken']))) {
 
                         $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
@@ -513,7 +537,7 @@ $connection->set_charset("utf8");
                         mysqli_close($connection);
                         } ?>
 
-                        <?php // CASE 11: indien het trefwoord (zoekveld) is ingevuld EN een GELEGENHEID werd geselecteerd
+                        <?php // CASE 12: indien het trefwoord (zoekveld) is ingevuld EN een GELEGENHEID werd geselecteerd
                         if (!empty($_POST['trefwoord']) && (!empty($_POST ['gelegenheid']))) {
 
                         $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
@@ -536,7 +560,7 @@ $connection->set_charset("utf8");
                         mysqli_close($connection);
                         } ?>
 
-                        <?php // CASE 12: indien het trefwoord (zoekveld) is ingevuld EN een GERECHT werd geselecteerd
+                        <?php // CASE 13: indien het trefwoord (zoekveld) is ingevuld EN een GERECHT werd geselecteerd
                         if (!empty($_POST['trefwoord']) && (!empty($_POST ['gerecht']))) {
 
                         $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
@@ -560,7 +584,7 @@ $connection->set_charset("utf8");
                         mysqli_close($connection);
                         } ?>
 
-                        <?php // CASE 13: indien het trefwoord (zoekveld) is ingevuld EN een MOEILIJKHEID werd geselecteerd
+                        <?php // CASE 14: indien het trefwoord (zoekveld) is ingevuld EN een MOEILIJKHEID werd geselecteerd
                         if (!empty($_POST['trefwoord']) && (!empty($_POST ['moeilijkheid']))) {
 
                         $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
@@ -573,7 +597,9 @@ $connection->set_charset("utf8");
                         while ($row = mysqli_fetch_array($result)){ ?>
 
                                 <div class="col-md-3 mdStyle">
-                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
+                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & recptnaam; de "recipe_Name wordt in de url geplaatst ?>
+                                    <?php echo '<a href="index.php?'.$row['recipe_Name'].'">';?>
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250">'; ?>
                                     <?php echo $row['recipe_Name']; ?>
                                 </div>
 
@@ -584,6 +610,31 @@ $connection->set_charset("utf8");
                         mysqli_close($connection);
                         } ?>
 
+                        <?php // CASE 15: indien het trefwoord (zoekveld) is ingevuld EN een DUUR werd geselecteerd
+                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['duur']))) {
+
+                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
+                        $duur = mysqli_real_escape_string($connection, $_POST['duur']);
+                        $query = "SELECT * FROM food.recipe  INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID WHERE recipe_Name LIKE '%".$trefwoord."%'
+                        AND instruction_Duration = '$duur'";
+                        $result = mysqli_query($connection,$query);
+
+                        if ($result->num_rows > 0) {
+                        while ($row = mysqli_fetch_array($result)){ ?>
+
+                                <div class="col-md-3 mdStyle">
+                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & recptnaam; de "recipe_Name wordt in de url geplaatst ?>
+                                    <?php echo '<a href="index.php?'.$row['recipe_Name'].'">';?>
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250">'; ?>
+                                    <?php echo $row['recipe_Name']; ?>
+                                </div>
+
+                                <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        mysqli_close($connection);
+                        } ?>
 
 
                 </div>
@@ -603,19 +654,6 @@ $connection->set_charset("utf8");
             <br>
 
         </div>
-
-        <!-- de dropdown selectie vasthouden in de 7 bootstrap comboboxen-->
-        <script>
-            $(document).ready(function() {
-                $('.dropdown').each(function(key, dropdown) {
-                    var $dropdown = $(dropdown);
-                    $dropdown.find('.dropdown-menu a').on('click', function() {
-                        $dropdown.find('button').text($(this).text()).append(' <span class="caret"></span>');
-                    });
-                });
-            });
-
-        </script>
 
         <!-- Dropdown Gelegenheid-->
         <script>
@@ -697,6 +735,20 @@ $connection->set_charset("utf8");
                 });
             });
         </script>
+
+        <!-- Dropdown Duur-->
+        <script>
+            $(document).ready(function() {
+                $('.dropdownDuur').each(function(key, dropdown) {
+                    var $dropdown = $(dropdown); // = data-toggle "dropdown"
+                    $dropdown.find('.dropdown-menu a').on('click', function() {
+                        $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
+                        $('#duurText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
+                    });
+                });
+            });
+        </script>
+
 
 
     </body>
