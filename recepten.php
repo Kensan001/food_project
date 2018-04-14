@@ -33,7 +33,7 @@ $connection->set_charset("utf8");
 
     <head>
         <title>
-            Home
+            Recepten
         </title>
         <meta charset="UTF-8">
         <!-- css -->
@@ -111,7 +111,6 @@ $connection->set_charset("utf8");
                     </div>
                 </div>
             </div>
-
 
             <!-- de dropdowns grouperen in een sectie om te stylen met border in css -->
             <section>
@@ -597,8 +596,8 @@ $connection->set_charset("utf8");
                         while ($row = mysqli_fetch_array($result)){ ?>
 
                                 <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & recptnaam; de "recipe_Name wordt in de url geplaatst ?>
-                                    <?php echo '<a href="index.php?'.$row['recipe_Name'].'">';?>
+                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
+                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
                                     <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250">'; ?>
                                     <?php echo $row['recipe_Name']; ?>
                                 </div>
@@ -623,8 +622,8 @@ $connection->set_charset("utf8");
                         while ($row = mysqli_fetch_array($result)){ ?>
 
                                 <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & recptnaam; de "recipe_Name wordt in de url geplaatst ?>
-                                    <?php echo '<a href="index.php?'.$row['recipe_Name'].'">';?>
+                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
+                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
                                     <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250">'; ?>
                                     <?php echo $row['recipe_Name']; ?>
                                 </div>
@@ -640,12 +639,6 @@ $connection->set_charset("utf8");
                 </div>
             </div>
 
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
             <br>
             <br>
             <br>

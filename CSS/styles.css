@@ -75,6 +75,14 @@ p.TopOfContainer {
     border-color: #c8f442;
 }
 
+/*well well-sm customizen los van bootstrap*/
+.well-sm {
+    padding: 20px; /*hoogte op 20 px*/
+    background-color:#f3ff72;
+    background-image: none; /*Bootstrap image verwijderen*/
+    border-color: #f3ff72;
+}
+
 /*Als je in de zoekbalk focust wordt de teskt blauw*/
 .searchTerm:focus {
     color: #00B4CC;
@@ -95,10 +103,15 @@ p.TopOfContainer {
 }
 
 .wrap {
-    position: relative; /*absolute zou iets gemakkelijker zijn maar verspring lichtjes bij resizen, nu niet*/
+    position: relative; /*absolute zou iets gemakkelijker zijn maar verspringt lichtjes bij resizen, nu niet*/
     width: 50%; /* de helft zo lang als de well*/
     bottom: 19px; /*hoogte mooi in het midden van de well*/
     left: 22.5%; /* breedte mooi in het midden van de well*/
+}
+
+.title {
+    text-align: center; /* Receptnaam lang of kort altijd mooi in het midden van de well*/
+    font-size: 19px;
 }
 
 /* styling van alle 7 dropdown buttons*/
