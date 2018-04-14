@@ -102,7 +102,7 @@ $connection->set_charset("utf8");
             </div>
 
             <div class="row">
-                <div class="picture">
+                <div class="col-md-4">
                     <?php
                     $title = str_replace('%20',' ',$_SERVER["QUERY_STRING"]); // %20 staat voor spatie in url, dit vervangen we !
                     $query = "SELECT * FROM food.recipe WHERE recipe_Name = '$title'";
@@ -111,9 +111,59 @@ $connection->set_charset("utf8");
                     if ($result->num_rows > 0) {
                     while ($row = mysqli_fetch_array($result)){ ?>
 
-                        <div class="col-md-4">
-                            <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="350" width="350">'; ?>
-                        </div>
+                        <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="350" width="350">'; ?>
+
+                        <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        //mysqli_close($connection); MAG NIET GESLOTEN WORDEN, PAS ALS LAATSTE QUERY UITGEVOERD WORDT.
+                     ?>
+                </div>
+
+                <div class="col-md-4">
+                    <?php
+                    $title = str_replace('%20',' ',$_SERVER["QUERY_STRING"]); // %20 staat voor spatie in url, dit vervangen we !
+                    $query="SELECT * FROM food.ingredient_has_measure
+                            INNER JOIN food.measure ON food.ingredient_has_measure.measure_measure_ID = food.measure.measure_ID
+                            INNER JOIN food.ingredient ON food.ingredient_has_measure.ingredient_ingredient_ID = food.ingredient.ingredient_ID
+                            INNER JOIN food.recipe_has_ingredient
+                            ON food.ingredient_has_measure.ingredient_has_measure_ID = food.recipe_has_ingredient.ihm_ingredient_has_measure_ID
+                            WHERE recipe_recipe_ID ='1'";
+
+                    $result = mysqli_query($connection,$query);
+
+                    if ($result->num_rows > 0) {
+                    while ($row = mysqli_fetch_array($result)){ ?>
+
+                        <?php echo $row['measure_Amount']; ?>
+                        <?php echo $row['measure_Unit']; ?>
+                        <?php echo $row['ingredient_Name']; ?>
+                        <br>
+
+                        <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        //mysqli_close($connection); MAG NIET GESLOTEN WORDEN, PAS ALS LAATSTE QUERY UITGEVOERD WORDT.
+                     ?>
+                </div>
+
+                <div class="col-md-4">
+                    <?php
+                    $title = str_replace('%20',' ',$_SERVER["QUERY_STRING"]); // %20 staat voor spatie in url, dit vervangen we !
+                    $query="SELECT * FROM food.instruction
+                            INNER JOIN food.recipe ON food.instruction.instruction_ID = food.recipe.instruction_instruction_ID1
+                            WHERE recipe_ID ='1'";
+
+                    $result = mysqli_query($connection,$query);
+
+                    if ($result->num_rows > 0) {
+                    while ($row = mysqli_fetch_array($result)){ ?>
+
+                        <p>
+                            <?php echo $row['instruction_Description']; ?>
+                        </p>
 
                         <?php }
                         } else {
@@ -123,9 +173,6 @@ $connection->set_charset("utf8");
                      ?>
                 </div>
 
-                <div class="ingredients">
-
-                </div>
             </div>
 
 
