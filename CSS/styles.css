@@ -114,6 +114,11 @@ p.TopOfContainer {
     font-size: 19px;
 }
 
+.panel-default{
+    text-align: center;
+    font-size: 17px;
+}
+
 /* styling van alle 7 dropdown buttons*/
 .dropdown-toggle {
     overflow: hidden;
@@ -156,5 +161,16 @@ section{
     width: 290px;
     height: 340px;
     padding-top: 40px;
+}
+
+.bron{
+    font-size: 17px;
+    font-weight: bold;
+}
+
+/*typische href properties (blauw+underline) veranderen*/
+.href{
+    color: black;
+    text-decoration: none; /*werkt niet TODO*/
 }
 

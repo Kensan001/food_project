@@ -93,9 +93,12 @@ $connection->set_charset("utf8");
                     <!-- recipe div om gemakkelijk het geheel van de zoekbar & button te restylen in css  -->
                     <div class="title">
                         <?php
-                        $title = str_replace('%20',' ',$_SERVER["QUERY_STRING"]); // %20 staat voor spatie in url, dit vervangen we !
-                        echo $title;
-                        //echo str_replace('%20',' ',$_SERVER["QUERY_STRING"]);
+                        //$title = str_replace('%20',' ',$_SERVER["QUERY_STRING"]); // %20 staat voor spatie in url, dit vervangen we !
+                        //echo $title;
+                        $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
+                        $replace = array(" ","'"); // vervang "%20" door spatie en "%27" door '.
+                        $fetch = $_SERVER["QUERY_STRING"];  // fetch query string url
+                        echo $title = str_replace($search, $replace, $fetch); // echo met behulp van str_replace
                         ?>
                     </div>
                 </div>
@@ -103,8 +106,12 @@ $connection->set_charset("utf8");
 
             <div class="row">
                 <div class="col-md-4">
+                    <br />
                     <?php
-                    $title = str_replace('%20',' ',$_SERVER["QUERY_STRING"]); // %20 staat voor spatie in url, dit vervangen we !
+                    $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
+                    $replace = array(" ","\'"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query)
+                    $fetch = $_SERVER["QUERY_STRING"]; // fetch query string url
+                    $title = str_replace($search,$replace,$fetch); // variabele voor query
                     $query = "SELECT * FROM food.recipe WHERE recipe_Name = '$title'";
                     $result = mysqli_query($connection,$query);
 
@@ -117,19 +124,29 @@ $connection->set_charset("utf8");
                         } else {
                             echo "Geen resultaten gevonden.";
                         }
-                        //mysqli_close($connection); MAG NIET GESLOTEN WORDEN, PAS ALS LAATSTE QUERY UITGEVOERD WORDT.
+                        //mysqli_close($connection); MAG NIET GESLOTEN WORDEN, PAS ALS LAATSTE QUERY UITGEVOERD WERD.
                      ?>
                 </div>
 
-                <div class="col-md-4">
+                <br />
+
+                <div class="col-md-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Ingrediënten</div>
+                    </div>
+
                     <?php
-                    $title = str_replace('%20',' ',$_SERVER["QUERY_STRING"]); // %20 staat voor spatie in url, dit vervangen we !
+                    $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
+                    $replace = array(" ","\'"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query)
+                    $fetch = $_SERVER["QUERY_STRING"]; // fetch query string url
+                    $title = str_replace($search,$replace,$fetch); // variabele voor query
                     $query="SELECT * FROM food.ingredient_has_measure
                             INNER JOIN food.measure ON food.ingredient_has_measure.measure_measure_ID = food.measure.measure_ID
                             INNER JOIN food.ingredient ON food.ingredient_has_measure.ingredient_ingredient_ID = food.ingredient.ingredient_ID
                             INNER JOIN food.recipe_has_ingredient
                             ON food.ingredient_has_measure.ingredient_has_measure_ID = food.recipe_has_ingredient.ihm_ingredient_has_measure_ID
-                            WHERE recipe_recipe_ID ='1'";
+                            INNER JOIN food.recipe ON food.recipe_has_ingredient.recipe_recipe_ID = food.recipe.recipe_ID
+                            WHERE recipe_Name ='$title'";
 
                     $result = mysqli_query($connection,$query);
 
@@ -139,31 +156,72 @@ $connection->set_charset("utf8");
                         <?php echo $row['measure_Amount']; ?>
                         <?php echo $row['measure_Unit']; ?>
                         <?php echo $row['ingredient_Name']; ?>
-                        <br>
+                        <br />
 
                         <?php }
                         } else {
                             echo "Geen resultaten gevonden.";
                         }
-                        //mysqli_close($connection); MAG NIET GESLOTEN WORDEN, PAS ALS LAATSTE QUERY UITGEVOERD WORDT.
+                        //mysqli_close($connection); MAG NIET GESLOTEN WORDEN, PAS ALS LAATSTE QUERY UITGEVOERD WERD.
                      ?>
+                        <br />
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-5">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Bereiding</div>
+                    </div>
+
                     <?php
-                    $title = str_replace('%20',' ',$_SERVER["QUERY_STRING"]); // %20 staat voor spatie in url, dit vervangen we !
+                    $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
+                    $replace = array(" ","\'"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query)
+                    $fetch = $_SERVER["QUERY_STRING"]; // fetch query string url
+                    $title = str_replace($search,$replace,$fetch); // variabele voor query
                     $query="SELECT * FROM food.instruction
                             INNER JOIN food.recipe ON food.instruction.instruction_ID = food.recipe.instruction_instruction_ID1
-                            WHERE recipe_ID ='1'";
+                            WHERE recipe_Name ='$title'";
 
                     $result = mysqli_query($connection,$query);
 
                     if ($result->num_rows > 0) {
                     while ($row = mysqli_fetch_array($result)){ ?>
 
-                        <p>
-                            <?php echo $row['instruction_Description']; ?>
-                        </p>
+                        <?php
+                            $search = array('.', ':'); // zoek "." & ":"
+                            $replace = array('.<br /><br />', ':<br />'); // vervang "." door ".+enter+enter" en vervang ":" door ":+enter".
+                            $fetch = $row['instruction_Description']; // msqli fetch array
+                            echo $instruction = str_replace($search, $replace, $fetch); // echo met behulp van str_replace
+                            ?>
+
+                        <?php }
+                        } else {
+                            echo "Geen resultaten gevonden.";
+                        }
+                        //mysqli_close($connection); MAG NIET GESLOTEN WORDEN, PAS ALS LAATSTE QUERY UITGEVOERD WERD.
+                     ?>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bron">
+                        <p>Bron van dit recept: </p>
+                    </div>
+                    <?php
+                    $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
+                    $replace = array(" ","\'"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query)
+                    $fetch = $_SERVER["QUERY_STRING"]; // fetch query string url
+                    $title = str_replace($search,$replace,$fetch); // variabele voor query
+                    $query="SELECT * FROM food.recipe WHERE recipe_Name='$title'";
+
+                    $result = mysqli_query($connection,$query);
+
+                    if ($result->num_rows > 0) {
+                    while ($row = mysqli_fetch_array($result)){ ?>
+
+                        <a href="<?php echo $row['recipe_Source'];?>" target="_blank">
+                            <?php echo $row['recipe_Source'];?>
+                        </a>
 
                         <?php }
                         } else {
@@ -171,10 +229,12 @@ $connection->set_charset("utf8");
                         }
                         mysqli_close($connection);
                      ?>
-                </div>
 
+                </div>
             </div>
 
+            <br \>
+            <br \>
 
         </div>
 
