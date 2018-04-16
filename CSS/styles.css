@@ -171,6 +171,6 @@ section{
 /*typische href properties (blauw+underline) veranderen*/
 .href{
     color: black;
-    text-decoration: none; /*werkt niet TODO*/
 }
+
 
