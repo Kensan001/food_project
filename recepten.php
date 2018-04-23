@@ -94,15 +94,15 @@ $connection->set_charset("utf8");
                     <div class="wrap">
                         <form action="recepten.php" method="post">
                             <input type="text" class="searchTerm" name="trefwoord" placeholder="Zoek">
-                            <!-- al deze input velden slaan de waarde van de dropdown selectie op voor verdere POST actie, deze tekstvelden worden gehide via class "hide"-->
-                            <div class="unhide">
-                                <input type="text" id="categorieText" name="categorie">
-                                <input type="text" id="seizoenText" name="seizoen">
-                                <input type="text" id="keukenText" name="keuken">
-                                <input type="text" id="gelegenheidText" name="gelegenheid">
-                                <input type="text" id="gerechtText" name="gerecht">
-                                <input type="text" id="moeilijkheidText" name="moeilijkheid">
-                                <input type="text" id="duurText" name="duur">
+                            <!-- al deze input velden slaan de waarde van de dropdown selectie op voor verdere POST actie, deze tekstvelden worden gehide via class "hide"("unhide")-->
+                            <div class="hide">
+                                <input type="text" class="form-control" id="categorieText" name="categorie" readonly>
+                                <input type="text" class="form-control" id="seizoenText" name="seizoen" readonly>
+                                <input type="text" class="form-control" id="keukenText" name="keuken" readonly>
+                                <input type="text" class="form-control" id="gelegenheidText" name="gelegenheid" readonly>
+                                <input type="text" class="form-control" id="gerechtText" name="gerecht" readonly>
+                                <input type="text" class="form-control" id="moeilijkheidText" name="moeilijkheid" readonly>
+                                <input type="text" class="form-control" id="duurText" name="duur" readonly>
                             </div>
                             <button type="submit" class="searchButton">
                             <i class="fa fa-search"></i> <!-- search icon bootstrap -->
@@ -286,6 +286,21 @@ $connection->set_charset("utf8");
                     </div>
                 </div>
             </section>
+
+            <!-- value onthoudt de selectie van de dropdown na de submit, deze wordt verder gebruikt/weergegeven in een label TODO-->
+            <div id="criteria" class="unhide">
+                <div class="row">
+                    <span id="moeilijkheidLabel" class="label label-success"></span>
+                    <span id="duurLabel" class="label label-success"></span>
+                    <input type="text" class="form-control" id="categorieText" name="categorie" value="<?php echo isset($_POST['categorie']) ? $_POST['categorie'] : '' ?>" readonly>
+                    <input type="text" class="form-control" id="seizoenText" name="seizoen" value="<?php echo isset($_POST['seizoen']) ? $_POST['seizoen'] : '' ?>" readonly>
+                    <input type="text" class="form-control" id="keukenText" name="keuken" value="<?php echo isset($_POST['keuken']) ? $_POST['keuken'] : '' ?>" readonly>
+                    <input type="text" class="form-control" id="gelegenheidText" name="gelegenheid" value="<?php echo isset($_POST['gelegenheid']) ? $_POST['gelegenheid'] : '' ?>" readonly>
+                    <input type="text" class="form-control" id="gerechtText" name="gerecht" value="<?php echo isset($_POST['gerecht']) ? $_POST['gerecht'] : '' ?>" readonly>
+                    <input type="text" class="form-control" id="moeilijkheidText" name="moeilijkheid" value="<?php echo isset($_POST['moeilijkheid']) ? $_POST['moeilijkheid'] : '' ?>" readonly>
+                    <input type="text" class="form-control" id="duurText" name="duur" value="<?php echo isset($_POST['duur']) ? $_POST['duur'] : '' ?>" readonly>
+                </div>
+            </div>
 
             <!-- database bevragen en resultaten weergeven -->
             <div class="resultQuery">
@@ -750,6 +765,7 @@ $connection->set_charset("utf8");
                     $dropdown.find('.dropdown-menu a').on('click', function() {
                         $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
                         $('#moeilijkheidText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
+                        //$('#moeilijkheidLabel').text($.trim($(this).html())); // tekst in label om de gebruikte zoekcriteria te tonen na de zoekopdracht.
                     });
                 });
             });
@@ -763,10 +779,12 @@ $connection->set_charset("utf8");
                     $dropdown.find('.dropdown-menu a').on('click', function() {
                         $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
                         $('#duurText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
+                        //$('#duurLabel').text($.trim($(this).html())); // tekst in label om de gebruikte zoekcriteria te tonen na de zoekopdracht.
                     });
                 });
             });
         </script>
+
 
 
 
