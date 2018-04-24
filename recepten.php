@@ -287,18 +287,56 @@ $connection->set_charset("utf8");
                 </div>
             </section>
 
+            <br>
+
             <!-- value onthoudt de selectie van de dropdown na de submit, deze wordt verder gebruikt/weergegeven in een label TODO-->
             <div id="criteria" class="unhide">
                 <div class="row">
-                    <span id="moeilijkheidLabel" class="label label-success"></span>
-                    <span id="duurLabel" class="label label-success"></span>
-                    <input type="text" class="form-control" id="categorieText" name="categorie" value="<?php echo isset($_POST['categorie']) ? $_POST['categorie'] : '' ?>" readonly>
-                    <input type="text" class="form-control" id="seizoenText" name="seizoen" value="<?php echo isset($_POST['seizoen']) ? $_POST['seizoen'] : '' ?>" readonly>
-                    <input type="text" class="form-control" id="keukenText" name="keuken" value="<?php echo isset($_POST['keuken']) ? $_POST['keuken'] : '' ?>" readonly>
-                    <input type="text" class="form-control" id="gelegenheidText" name="gelegenheid" value="<?php echo isset($_POST['gelegenheid']) ? $_POST['gelegenheid'] : '' ?>" readonly>
-                    <input type="text" class="form-control" id="gerechtText" name="gerecht" value="<?php echo isset($_POST['gerecht']) ? $_POST['gerecht'] : '' ?>" readonly>
-                    <input type="text" class="form-control" id="moeilijkheidText" name="moeilijkheid" value="<?php echo isset($_POST['moeilijkheid']) ? $_POST['moeilijkheid'] : '' ?>" readonly>
-                    <input type="text" class="form-control" id="duurText" name="duur" value="<?php echo isset($_POST['duur']) ? $_POST['duur'] : '' ?>" readonly>
+                    <div class="col-md-3">
+                        <p>Uw laatste zoekcriteria was:</p>
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class="col-md-4">
+                            Trefwoord:
+                            <input type="text" class="form-control" name="trefwoord" value="<?php echo isset($_POST['trefwoord']) ? $_POST['trefwoord'] : '' ?>" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            Categorie:
+                            <input type="text" class="form-control" name="categorie" value="<?php echo isset($_POST['categorie']) ? $_POST['categorie'] : '' ?>" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            Seizoen:
+                            <input type="text" class="form-control" name="seizoen" value="<?php echo isset($_POST['seizoen']) ? $_POST['seizoen'] : '' ?>" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            Keuken:
+                            <input type="text" class="form-control" name="keuken" value="<?php echo isset($_POST['keuken']) ? $_POST['keuken'] : '' ?>" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            Gelegenheid:
+                            <input type="text" class="form-control" name="gelegenheid" value="<?php echo isset($_POST['gelegenheid']) ? $_POST['gelegenheid'] : '' ?>" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            Gerecht:
+                            <input type="text" class="form-control" name="gerecht" value="<?php echo isset($_POST['gerecht']) ? $_POST['gerecht'] : '' ?>" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            Moeilijkheid:
+                            <input type="text" class="form-control" name="moeilijkheid" value="<?php echo isset($_POST['moeilijkheid']) ? $_POST['moeilijkheid'] : '' ?>" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            Duur:
+                            <input type="text" class="form-control" name="duur" value="<?php echo isset($_POST['duur']) ? $_POST['duur'] : '' ?>" readonly>
+                        </div>
+                    </div>
                 </div>
             </div>
 
