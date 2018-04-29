@@ -105,6 +105,8 @@ $connection->set_charset("utf8");
                                 <input type="text" class="form-control" id="duurText" name="duur" readonly>
                             </div>
                             <button type="submit" class="searchButton">
+                            <!--<button type="submit" class="searchButton" onclick="timeFunction()"> -->
+                            <!--<button type="submit" class="searchButton" onclick="$('#criteria').show()">-->
                             <i class="fa fa-search"></i> <!-- search icon bootstrap -->
                             </button>
                         </form>
@@ -288,9 +290,22 @@ $connection->set_charset("utf8");
             </section>
 
             <br>
+            <!-- Code om de zoekhistoriek weer te geven-->
+            <div class="zoekhistoriek">
+            Uw laatste zoekcriteria was: <br>
+            <?php echo isset($_POST['trefwoord']) ? $_POST['trefwoord']:'' ?> &nbsp;
+            <?php echo isset($_POST['gelegenheid']) ? $_POST['gelegenheid'] : ' ' ?> &nbsp;
+            <?php echo isset($_POST['keuken']) ? $_POST['keuken'] : ' ' ?> &nbsp;
+            <?php echo isset($_POST['categorie']) ? $_POST['categorie'] : ' ' ?> &nbsp;
+            <?php echo isset($_POST['seizoen']) ? $_POST['seizoen'] : ' ' ?> &nbsp;
+            <?php echo isset($_POST['gerecht']) ? $_POST['gerecht'] : ' ' ?> &nbsp;
+            <?php echo isset($_POST['moeilijkheid']) ? $_POST['moeilijkheid'] : ' ' ?> &nbsp;
+            <?php echo isset($_POST['duur']) ? $_POST['duur'] : ' ' ?>
+            </div>
+            <br>
 
-            <!-- value onthoudt de selectie van de dropdown na de submit, deze wordt verder gebruikt/weergegeven in een label TODO-->
-            <div id="criteria" class="unhide">
+            <!-- tweede manier om de zoekhistoriek weer te geven, momenteel niet gebruikt-->
+            <div id="criteria" style="display:none">
                 <div class="row">
                     <div class="col-md-3">
                         <p>Uw laatste zoekcriteria was:</p>
@@ -298,43 +313,35 @@ $connection->set_charset("utf8");
 
                     <div class="col-md-9">
                         <div class="col-md-4">
-                            Trefwoord:
-                            <input type="text" class="form-control" name="trefwoord" value="<?php echo isset($_POST['trefwoord']) ? $_POST['trefwoord'] : '' ?>" readonly>
+                            <input type="text" class="form-control" name="trefwoord" placeholder="geen trefwoord gekozen" value="<?php echo isset($_POST['trefwoord']) ? $_POST['trefwoord'] : '' ?>" readonly>
                         </div>
 
                         <div class="col-md-4">
-                            Categorie:
-                            <input type="text" class="form-control" name="categorie" value="<?php echo isset($_POST['categorie']) ? $_POST['categorie'] : '' ?>" readonly>
+                            <input type="text" class="form-control" name="categorie" placeholder="geen categorie gekozen" value="<?php echo isset($_POST['categorie']) ? $_POST['categorie'] : '' ?>" readonly>
                         </div>
 
                         <div class="col-md-4">
-                            Seizoen:
-                            <input type="text" class="form-control" name="seizoen" value="<?php echo isset($_POST['seizoen']) ? $_POST['seizoen'] : '' ?>" readonly>
+                            <input type="text" class="form-control" name="seizoen" placeholder="geen seizoen gekozen" value="<?php echo isset($_POST['seizoen']) ? $_POST['seizoen'] : '' ?>" readonly>
                         </div>
 
                         <div class="col-md-4">
-                            Keuken:
-                            <input type="text" class="form-control" name="keuken" value="<?php echo isset($_POST['keuken']) ? $_POST['keuken'] : '' ?>" readonly>
+                            <input type="text" class="form-control" name="keuken" placeholder="geen keuken gekozen" value="<?php echo isset($_POST['keuken']) ? $_POST['keuken'] : '' ?>" readonly>
                         </div>
 
                         <div class="col-md-4">
-                            Gelegenheid:
-                            <input type="text" class="form-control" name="gelegenheid" value="<?php echo isset($_POST['gelegenheid']) ? $_POST['gelegenheid'] : '' ?>" readonly>
+                            <input type="text" class="form-control" name="gelegenheid" placeholder="geen gelegenheid gekozen" value="<?php echo isset($_POST['gelegenheid']) ? $_POST['gelegenheid'] : '' ?>" readonly>
                         </div>
 
                         <div class="col-md-4">
-                            Gerecht:
-                            <input type="text" class="form-control" name="gerecht" value="<?php echo isset($_POST['gerecht']) ? $_POST['gerecht'] : '' ?>" readonly>
+                            <input type="text" class="form-control" name="gerecht" placeholder="geen gerecht gekozen" value="<?php echo isset($_POST['gerecht']) ? $_POST['gerecht'] : '' ?>" readonly>
                         </div>
 
                         <div class="col-md-4">
-                            Moeilijkheid:
-                            <input type="text" class="form-control" name="moeilijkheid" value="<?php echo isset($_POST['moeilijkheid']) ? $_POST['moeilijkheid'] : '' ?>" readonly>
+                            <input type="text" class="form-control" name="moeilijkheid" placeholder="geen moeilijkheid gekozen" value="<?php echo isset($_POST['moeilijkheid']) ? $_POST['moeilijkheid'] : '' ?>" readonly>
                         </div>
 
                         <div class="col-md-4">
-                            Duur:
-                            <input type="text" class="form-control" name="duur" value="<?php echo isset($_POST['duur']) ? $_POST['duur'] : '' ?>" readonly>
+                            <input type="text" class="form-control" name="duur" placeholder="geen duur gekozen" value="<?php echo isset($_POST['duur']) ? $_POST['duur'] : '' ?>" readonly>
                         </div>
                     </div>
                 </div>
@@ -344,11 +351,77 @@ $connection->set_charset("utf8");
             <div class="resultQuery">
                 <div class="row">
 
-                    <?php //CASE 1: indien enkel trefwoord (zoekveld) is ingevuld (TODO VERDER AFWERKEN VOOR 3 COMBO'S !!!)
-                        if (!empty($_POST['trefwoord'])&&(empty($_POST ['gelegenheid'])&&(empty($_POST ['keuken'])&&(empty($_POST ['categorie'])&&(empty($_POST ['seizoen'])&&(empty($_POST ['gerecht'])&&(empty($_POST ['moeilijkheid'])&&(empty($_POST ['duur']))))))))) {
+                    <?php //alle velden checken of ze wel ingevuld/geselecteerd werden, de variabelen tussen de '' komen van de hidden tekstvelden in div class "hide" lijn 98
 
-                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $query = "SELECT * FROM food.recipe WHERE recipe_Name LIKE '%".$trefwoord."%'";
+                        if (empty($_POST['trefwoord'])){
+                        $trefwoord="%";}
+                        if (!empty($_POST['trefwoord'])){
+                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);}
+
+                        if (empty($_POST['gelegenheid'])){
+                        $gelegenheid="%";}
+                        if (!empty($_POST['gelegenheid'])){
+                        $gelegenheid = mysqli_real_escape_string($connection, $_POST['gelegenheid']);}
+
+                        if (empty($_POST['keuken'])){
+                        $keuken="%";}
+                        if (!empty($_POST['keuken'])){
+                        $keuken = mysqli_real_escape_string($connection, $_POST['keuken']);}
+
+                        if (empty($_POST['categorie'])){
+                        $categorie="%";}
+                        if (!empty($_POST['categorie'])){
+                        $categorie = mysqli_real_escape_string($connection, $_POST['categorie']);}
+
+                        if (empty($_POST['seizoen'])){
+                        $seizoen="%";}
+                        if (!empty($_POST['seizoen'])){
+                        $seizoen = mysqli_real_escape_string($connection, $_POST['seizoen']);}
+
+                        if (empty($_POST['gerecht'])){
+                        $gerecht="%";}
+                        if (!empty($_POST['gerecht'])){
+                        $gerecht = mysqli_real_escape_string($connection, $_POST['gerecht']);}
+
+                        if (empty($_POST['moeilijkheid'])){
+                        $moeilijkheid="%";}
+                        if (!empty($_POST['moeilijkheid'])){
+                        $moeilijkheid = mysqli_real_escape_string($connection, $_POST['moeilijkheid']);}
+
+                        if (empty($_POST['duur'])){
+                        $duur="%";}
+                        if (!empty($_POST['duur'])){
+                        $duur = mysqli_real_escape_string($connection, $_POST['duur']);}
+
+                        $query = "SELECT * FROM food.recipe
+                                    INNER JOIN food.season ON season_season_ID1 = season_ID
+                                    INNER JOIN food.category ON category_category_ID1 = category_ID
+                                    INNER JOIN food.kitchen ON kitchen_kitchen_ID1 = kitchen_ID
+                                    INNER JOIN food.theme ON theme_theme_ID1 = theme_ID
+                                    INNER JOIN food.course ON course_course_ID1 = course_ID
+                                    INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID
+
+                                    WHERE recipe_Name LIKE '%".$trefwoord."%'
+                                    AND season_Description LIKE '$seizoen'
+                                    AND category_Name LIKE '$categorie'
+                                    AND kitchen_Description LIKE '$keuken'
+                                    AND theme_Description LIKE '$gelegenheid'
+                                    AND course_Description LIKE '$gerecht'
+                                    AND instruction_Difficulty LIKE '$moeilijkheid'
+                                    AND instruction_Duration LIKE '$duur'";
+
+                                    //WHERE season_Description LIKE '%'
+                                    //AND season_Description = '%'
+                                    //AND category_Name = ''
+                                    //AND kitchen_Description = ''
+                                    //AND theme_Description = ''
+                                    //AND course_Description = ''
+                                    //AND instruction_Difficulty = ''
+                                    //AND instruction_Duration = ''
+
+
+
+
                         $result = mysqli_query($connection,$query);
 
                         if ($result->num_rows > 0) {
@@ -366,353 +439,7 @@ $connection->set_charset("utf8");
                             echo "Geen resultaten gevonden.";
                         }
                         mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 2: indien het trefwoord (zoekveld) leeg is EN enkel een SEIZOEN werd geselecteerd
-                        if (empty($_POST['trefwoord']) && (!empty($_POST ['seizoen']))) {
-
-                        $seizoen = mysqli_real_escape_string($connection, $_POST['seizoen']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.season ON season_season_ID1 = season_ID WHERE season_Description = '$seizoen'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                        <div class="col-md-3 mdStyle">
-                            <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                            <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                            <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                            <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                        </div>
-
-                        <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 3: indien het trefwoord (zoekveld) leeg is EN enkel een CATEGORIE werd geselecteerd
-                        if (empty($_POST['trefwoord']) && (!empty($_POST ['categorie']))) {
-
-                        $categorie = mysqli_real_escape_string($connection, $_POST['categorie']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.category ON category_category_ID1 = category_ID WHERE category_Name = '$categorie'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                            <div class="col-md-3 mdStyle">
-                                <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                            </div>
-
-                            <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 4: indien het trefwoord (zoekveld) leeg is EN enkel een KEUKEN werd geselecteerd
-                        if (empty($_POST['trefwoord']) && (!empty($_POST ['keuken']))) {
-
-                        $keuken = mysqli_real_escape_string($connection, $_POST['keuken']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.kitchen ON kitchen_kitchen_ID1 = kitchen_ID WHERE kitchen_Description = '$keuken'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                            <div class="col-md-3 mdStyle">
-                                <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                            </div>
-
-                            <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 5: indien het trefwoord (zoekveld) leeg is EN enkel een GELEGENHEID werd geselecteerd
-                        if (empty($_POST['trefwoord']) && (!empty($_POST ['gelegenheid']))) {
-
-                        $gelegenheid = mysqli_real_escape_string($connection, $_POST['gelegenheid']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.theme ON theme_theme_ID1 = theme_ID WHERE theme_Description = '$gelegenheid'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                            <div class="col-md-3 mdStyle">
-                                <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                            </div>
-
-                            <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 6: indien het trefwoord (zoekveld) leeg is EN enkel een GERECHT werd geselecteerd
-                        if (empty($_POST['trefwoord']) && (!empty($_POST ['gerecht']))) {
-
-                        $gerecht = mysqli_real_escape_string($connection, $_POST['gerecht']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.course ON course_course_ID1 = course_ID WHERE course_Description = '$gerecht'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                            <div class="col-md-3 mdStyle">
-                                <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                            </div>
-
-                            <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 7: indien het trefwoord (zoekveld) leeg is EN enkel een MOEILIJKHEID werd geselecteerd
-                        if (empty($_POST['trefwoord']) && (!empty($_POST ['moeilijkheid']))) {
-
-                        $moeilijkheid = mysqli_real_escape_string($connection, $_POST['moeilijkheid']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID WHERE instruction_Difficulty = '$moeilijkheid'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                            <div class="col-md-3 mdStyle">
-                                <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                            </div>
-
-                            <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 8: indien het trefwoord (zoekveld) leeg is EN enkel een DUUR werd geselecteerd
-                        if (empty($_POST['trefwoord']) && (!empty($_POST ['duur']))) {
-
-                        $duur = mysqli_real_escape_string($connection, $_POST['duur']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID WHERE instruction_Duration = '$duur'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                            <div class="col-md-3 mdStyle">
-                                <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                            </div>
-
-                            <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 9: indien het trefwoord (zoekveld) is ingevuld EN een SEIZOEN werd geselecteerd
-                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['seizoen']))) {
-
-                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $seizoen = mysqli_real_escape_string($connection, $_POST['seizoen']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.season ON season_season_ID1 = season_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND season_Description = '$seizoen'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                                <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                    <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                                </div>
-
-                                <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 10: indien het trefwoord (zoekveld) is ingevuld EN een CATEGORIE werd geselecteerd
-                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['categorie']))) {
-
-                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $categorie = mysqli_real_escape_string($connection, $_POST['categorie']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.category ON category_category_ID1 = category_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND category_Name = '$categorie'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                                <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                    <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                                </div>
-
-                                <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php //CASE 11: indien het trefwoord (zoekveld) is ingevuld EN een KEUKEN werd geselecteerd
-                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['keuken']))) {
-
-                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $keuken = mysqli_real_escape_string($connection, $_POST['keuken']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.kitchen ON kitchen_kitchen_ID1 = kitchen_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND kitchen_Description = '$keuken'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                                <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                    <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                                </div>
-
-                                <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php // CASE 12: indien het trefwoord (zoekveld) is ingevuld EN een GELEGENHEID werd geselecteerd
-                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['gelegenheid']))) {
-
-                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $gelegenheid = mysqli_real_escape_string($connection, $_POST['gelegenheid']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.theme ON theme_theme_ID1 = theme_ID WHERE recipe_Name LIKE '%".$trefwoord."%' AND theme_Description = '$gelegenheid'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                                <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                    <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                                </div>
-
-                                <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php // CASE 13: indien het trefwoord (zoekveld) is ingevuld EN een GERECHT werd geselecteerd
-                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['gerecht']))) {
-
-                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $gerecht = mysqli_real_escape_string($connection, $_POST['gerecht']);
-                        $query = "SELECT * FROM food.recipe INNER JOIN food.course ON course_course_ID1 = course_ID WHERE recipe_Name LIKE '%".$trefwoord."%'
-                        AND course_Description = '$gerecht'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                                <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                    <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                                </div>
-
-                                <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php // CASE 14: indien het trefwoord (zoekveld) is ingevuld EN een MOEILIJKHEID werd geselecteerd
-                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['moeilijkheid']))) {
-
-                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $moeilijkheid = mysqli_real_escape_string($connection, $_POST['moeilijkheid']);
-                        $query = "SELECT * FROM food.recipe  INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID WHERE recipe_Name LIKE '%".$trefwoord."%'
-                        AND instruction_Difficulty = '$moeilijkheid'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                                <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250">'; ?>
-                                    <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                                </div>
-
-                                <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
-
-                        <?php // CASE 15: indien het trefwoord (zoekveld) is ingevuld EN een DUUR werd geselecteerd
-                        if (!empty($_POST['trefwoord']) && (!empty($_POST ['duur']))) {
-
-                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);
-                        $duur = mysqli_real_escape_string($connection, $_POST['duur']);
-                        $query = "SELECT * FROM food.recipe  INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID WHERE recipe_Name LIKE '%".$trefwoord."%'
-                        AND instruction_Duration = '$duur'";
-                        $result = mysqli_query($connection,$query);
-
-                        if ($result->num_rows > 0) {
-                        while ($row = mysqli_fetch_array($result)){ ?>
-
-                                <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250">'; ?>
-                                    <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                                </div>
-
-                                <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
-                        }
-                        mysqli_close($connection);
-                        } ?>
+                        ?>
 
 
                 </div>
@@ -817,11 +544,25 @@ $connection->set_charset("utf8");
                     $dropdown.find('.dropdown-menu a').on('click', function() {
                         $dropdown.find('button').text($(this).text()).append('<span class="caret"></span>'); // tekst in dropdown button updaten
                         $('#duurText').val($.trim($(this).html())); // tekst in hidden tekstveld updaten voor POST naar query PHP.
-                        //$('#duurLabel').text($.trim($(this).html())); // tekst in label om de gebruikte zoekcriteria te tonen na de zoekopdracht.
+                        $('#duurLabel').text($.trim($(this).html())); // tekst in label om de gebruikte zoekcriteria te tonen na de zoekopdracht.
                     });
                 });
             });
         </script>
+
+        <script>
+            function timeFunction(){
+                //var divelement = document.getElementById("criteria");
+                //setTimeout(function(){
+                //if(divelement.style.display== "none")
+                //    divelement.style.display = "block";}, 1000);
+                //setTimeout(function(){alert("test"); }, 5000);
+                //alert("blabla");
+                //setTimeout(function(){ alert("After 5 seconds!"); }, 5000);
+                }
+        </script>
+
+
 
 
 
