@@ -42,8 +42,8 @@ $connection->set_charset("utf8");
         <!--optional theme !-->
         <link rel="stylesheet" href="LIB/bootstrap-3.3.6/css/bootstrap-theme.min.css">
         <!-- fonts -->
-        <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
         <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Boogaloo" rel="stylesheet">
         <!-- javascript, eerst Jquery dan pas bootstrap anders werkt het niet -->
         <script type="text/javascript" src="LIB/jquery-1.12.1.min.js"></script>
         <script src="LIB/bootstrap-4.0.0-beta-dist/js/bootstrap.min.js"></script>
@@ -292,19 +292,21 @@ $connection->set_charset("utf8");
             <br>
             <!-- Code om de zoekhistoriek weer te geven-->
             <div class="zoekhistoriek">
-            Uw laatste zoekcriteria was: <br>
-            <?php echo isset($_POST['trefwoord']) ? $_POST['trefwoord']:'' ?> &nbsp;
-            <?php echo isset($_POST['gelegenheid']) ? $_POST['gelegenheid'] : ' ' ?> &nbsp;
-            <?php echo isset($_POST['keuken']) ? $_POST['keuken'] : ' ' ?> &nbsp;
-            <?php echo isset($_POST['categorie']) ? $_POST['categorie'] : ' ' ?> &nbsp;
-            <?php echo isset($_POST['seizoen']) ? $_POST['seizoen'] : ' ' ?> &nbsp;
-            <?php echo isset($_POST['gerecht']) ? $_POST['gerecht'] : ' ' ?> &nbsp;
-            <?php echo isset($_POST['moeilijkheid']) ? $_POST['moeilijkheid'] : ' ' ?> &nbsp;
-            <?php echo isset($_POST['duur']) ? $_POST['duur'] : ' ' ?>
+                Uw laatste zoekcriteria was: <br>
+                <?php echo isset($_POST['trefwoord']) ? $_POST['trefwoord']:'' ?> &nbsp;
+                <?php echo isset($_POST['gelegenheid']) ? $_POST['gelegenheid'] : ' ' ?> &nbsp;
+                <?php echo isset($_POST['keuken']) ? $_POST['keuken'] : ' ' ?> &nbsp;
+                <?php echo isset($_POST['categorie']) ? $_POST['categorie'] : ' ' ?> &nbsp;
+                <?php echo isset($_POST['seizoen']) ? $_POST['seizoen'] : ' ' ?> &nbsp;
+                <?php echo isset($_POST['gerecht']) ? $_POST['gerecht'] : ' ' ?> &nbsp;
+                <?php echo isset($_POST['moeilijkheid']) ? $_POST['moeilijkheid'] : ' ' ?> &nbsp;
+                <?php echo isset($_POST['duur']) ? $_POST['duur'] : ' ' ?>
             </div>
             <br>
 
-            <!-- tweede manier om de zoekhistoriek weer te geven, momenteel niet gebruikt-->
+
+
+            <!-- tweede manier om de zoekhistoriek weer te geven, momenteel niet gebruikt = display: none-->
             <div id="criteria" style="display:none">
                 <div class="row">
                     <div class="col-md-3">
@@ -351,8 +353,9 @@ $connection->set_charset("utf8");
             <div class="resultQuery">
                 <div class="row">
 
-                    <?php //alle velden checken of ze wel ingevuld/geselecteerd werden, de variabelen tussen de '' komen van de hidden tekstvelden in div class "hide" lijn 98
+                    <?php
 
+                        //alle velden checken of ze wel ingevuld/geselecteerd werden, de variabelen tussen de '' komen van de hidden tekstvelden in div class "hide" lijn 98
                         if (empty($_POST['trefwoord'])){
                         $trefwoord="%";}
                         if (!empty($_POST['trefwoord'])){
@@ -393,7 +396,17 @@ $connection->set_charset("utf8");
                         if (!empty($_POST['duur'])){
                         $duur = mysqli_real_escape_string($connection, $_POST['duur']);}
 
-                        $query = "SELECT * FROM food.recipe
+                        // beginning pagination code
+                        if (isset($_GET['pageno'])) {
+                        $pageno = $_GET['pageno'];
+                        } else {
+                        $pageno = 1;
+                        }
+
+                        $no_of_records_per_page = 16;
+                        $offset = ($pageno-1) * $no_of_records_per_page;
+
+                        $total_pages_sql = "SELECT * FROM food.recipe
                                     INNER JOIN food.season ON season_season_ID1 = season_ID
                                     INNER JOIN food.category ON category_category_ID1 = category_ID
                                     INNER JOIN food.kitchen ON kitchen_kitchen_ID1 = kitchen_ID
@@ -410,39 +423,80 @@ $connection->set_charset("utf8");
                                     AND instruction_Difficulty LIKE '$moeilijkheid'
                                     AND instruction_Duration LIKE '$duur'";
 
-                                    //WHERE season_Description LIKE '%'
-                                    //AND season_Description = '%'
-                                    //AND category_Name = ''
-                                    //AND kitchen_Description = ''
-                                    //AND theme_Description = ''
-                                    //AND course_Description = ''
-                                    //AND instruction_Difficulty = ''
-                                    //AND instruction_Duration = ''
+                        $resultpages = mysqli_query($connection,$total_pages_sql);
+                        $count = mysqli_num_rows($resultpages); // geeft het aantal hits terug van de query.
+                        $total_pages = ceil($count / $no_of_records_per_page); // ceil = roundup
+                        // end pagination code
 
+                        $query = "SELECT * FROM food.recipe
+                                    INNER JOIN food.season ON season_season_ID1 = season_ID
+                                    INNER JOIN food.category ON category_category_ID1 = category_ID
+                                    INNER JOIN food.kitchen ON kitchen_kitchen_ID1 = kitchen_ID
+                                    INNER JOIN food.theme ON theme_theme_ID1 = theme_ID
+                                    INNER JOIN food.course ON course_course_ID1 = course_ID
+                                    INNER JOIN food.instruction ON instruction_instruction_ID1 = instruction_ID
 
+                                    WHERE recipe_Name LIKE '%".$trefwoord."%'
+                                    AND season_Description LIKE '$seizoen'
+                                    AND category_Name LIKE '$categorie'
+                                    AND kitchen_Description LIKE '$keuken'
+                                    AND theme_Description LIKE '$gelegenheid'
+                                    AND course_Description LIKE '$gerecht'
+                                    AND instruction_Difficulty LIKE '$moeilijkheid'
+                                    AND instruction_Duration LIKE '$duur'
+                                    LIMIT $offset, $no_of_records_per_page";
 
 
                         $result = mysqli_query($connection,$query);
 
-                        if ($result->num_rows > 0) {
+                        if ($result->num_rows > 0) { ?>
+
+                    <div class="col-md-12 aantalRecepten">
+                        <?php // Return the number of rows in result set ?>
+                        <?php $rowcount=mysqli_num_rows($resultpages);
+                        printf("%d recept(en)",$rowcount); //%d - Take the next argument and print it as an int => betekent dat hij de variabele $rowcount hierin stopt als int?>
+                    </div>
+
+                    <?php
+
                         while ($row = mysqli_fetch_array($result)){ ?>
 
-                                <div class="col-md-3 mdStyle">
-                                    <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="250" width="250"/>'; ?>
-                                    <div class="href"><?php echo $row['recipe_Name']; ?></div>
-                                </div>
+                    <div class="col-md-3 mdStyle">
+                        <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
+                            <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
+                            <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="auto" width="100%">'; // auto & 100% = responsive!?>
+                            <div class="href">
+                                <?php echo$row['recipe_Name']; ?>
+                            </div>
+                    </div>
 
-                                <?php }
-                        } else {
-                            echo "Geen resultaten gevonden.";
+
+                    <?php }
+                        } else { ?>
+                    <div class="col-md-12">
+                        <?php echo "Geen resultaten gevonden."; ?>
+                    </div>
+                    <?php
                         }
                         mysqli_close($connection);
                         ?>
-
-
                 </div>
+            </div>
+
+            <div class="unhide">
+
+                <ul class="pagination">
+                    <li><a href="?pageno=1">First</a></li>
+
+                    <li class="<?php if($pageno <= $total_pages){ echo 'disabled'; } ?>">
+                        <a href="<?php if($pageno <= $total_pages){ echo '#'; } else { echo " ?pageno=".($pageno - 1); } ?>">Prev</a>
+                    </li>
+
+                    <li class="<?php if($pageno >= $total_pages){ echo 'disabled'; } ?>">
+                        <a href="<?php if($pageno >= $total_pages){ echo '#'; } else { echo " ?pageno=".($pageno + 1); } ?>">Next</a>
+                    </li>
+
+                </ul>
             </div>
 
             <br>
@@ -465,6 +519,7 @@ $connection->set_charset("utf8");
                     });
                 });
             });
+
         </script>
 
         <!-- Dropdown Keuken-->
@@ -478,6 +533,7 @@ $connection->set_charset("utf8");
                     });
                 });
             });
+
         </script>
 
         <!-- Dropdown Categorie-->
@@ -491,6 +547,7 @@ $connection->set_charset("utf8");
                     });
                 });
             });
+
         </script>
 
         <!-- Dropdown Seizoen-->
@@ -507,6 +564,7 @@ $connection->set_charset("utf8");
                     });
                 });
             });
+
         </script>
 
         <!-- Dropdown Gerecht-->
@@ -520,6 +578,7 @@ $connection->set_charset("utf8");
                     });
                 });
             });
+
         </script>
 
         <!-- Dropdown Moeilijkheid-->
@@ -534,6 +593,7 @@ $connection->set_charset("utf8");
                     });
                 });
             });
+
         </script>
 
         <!-- Dropdown Duur-->
@@ -548,18 +608,7 @@ $connection->set_charset("utf8");
                     });
                 });
             });
-        </script>
 
-        <script>
-            function timeFunction(){
-                //var divelement = document.getElementById("criteria");
-                //setTimeout(function(){
-                //if(divelement.style.display== "none")
-                //    divelement.style.display = "block";}, 1000);
-                //setTimeout(function(){alert("test"); }, 5000);
-                //alert("blabla");
-                //setTimeout(function(){ alert("After 5 seconds!"); }, 5000);
-                }
         </script>
 
 

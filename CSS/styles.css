@@ -161,6 +161,9 @@ section{
     width: 290px;
     height: 340px;
     padding-top: 40px;
+    text-align: center;
+    margin-right:auto; /*center image when small screen*/
+    margin-left:auto; /*center image when small screen*/
 }
 
 .bron{
@@ -176,7 +179,12 @@ section{
 .zoekhistoriek{
     font-size: 12px;
     text-align: center;
+}
 
+.aantalRecepten{
+    text-align: center;
+    font-family: 'Boogaloo', cursive;
+    font-size: 26px;
 }
 
 

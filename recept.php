@@ -42,7 +42,6 @@ $connection->set_charset("utf8");
         <!--optional theme !-->
         <link rel="stylesheet" href="LIB/bootstrap-3.3.6/css/bootstrap-theme.min.css">
         <!-- fonts -->
-        <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
         <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
         <!-- javascript, eerst Jquery dan pas bootstrap anders werkt het niet -->
         <script type="text/javascript" src="LIB/jquery-1.12.1.min.js"></script>
@@ -95,8 +94,8 @@ $connection->set_charset("utf8");
                         <?php
                         //$title = str_replace('%20',' ',$_SERVER["QUERY_STRING"]); // %20 staat voor spatie in url, dit vervangen we !
                         //echo $title;
-                        $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
-                        $replace = array(" ","'"); // vervang "%20" door spatie en "%27" door '.
+                        $search = array("%20", "%27","%C3%A7"); // zoek "%20","%27" & "%C3%A7" in url! %20 staat voor spatie, %27 voor single quote ', %C3%A7 voor "ç"
+                        $replace = array(" ","\'","ç"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query), %C3%A7 door "ç"
                         $fetch = $_SERVER["QUERY_STRING"];  // fetch query string url
                         echo $title = str_replace($search, $replace, $fetch); // echo met behulp van str_replace
                         ?>
@@ -108,8 +107,8 @@ $connection->set_charset("utf8");
                 <div class="col-md-4">
                     <br />
                     <?php
-                    $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
-                    $replace = array(" ","\'"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query)
+                    $search = array("%20", "%27","%C3%A7"); // zoek "%20","%27" & "%C3%A7" in url! %20 staat voor spatie, %27 voor single quote ', %C3%A7 voor "ç"
+                    $replace = array(" ","\'","ç"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query), %C3%A7 door "ç"
                     $fetch = $_SERVER["QUERY_STRING"]; // fetch query string url
                     $title = str_replace($search,$replace,$fetch); // variabele voor query
                     $query = "SELECT * FROM food.recipe WHERE recipe_Name = '$title'";
@@ -118,7 +117,7 @@ $connection->set_charset("utf8");
                     if ($result->num_rows > 0) {
                     while ($row = mysqli_fetch_array($result)){ ?>
 
-                        <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="350" width="350">'; ?>
+                        <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="auto" width="100%">'; // auto & 100% = responsive !?>
 
                         <?php }
                         } else {
@@ -136,8 +135,8 @@ $connection->set_charset("utf8");
                     </div>
 
                     <?php
-                    $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
-                    $replace = array(" ","\'"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query)
+                    $search = array("%20", "%27","%C3%A7"); // zoek "%20","%27" & "%C3%A7" in url! %20 staat voor spatie, %27 voor single quote ', %C3%A7 voor "ç"
+                    $replace = array(" ","\'","ç"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query), %C3%A7 door "ç"
                     $fetch = $_SERVER["QUERY_STRING"]; // fetch query string url
                     $title = str_replace($search,$replace,$fetch); // variabele voor query
                     $query="SELECT * FROM food.ingredient_has_measure
@@ -173,8 +172,8 @@ $connection->set_charset("utf8");
                     </div>
 
                     <?php
-                    $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
-                    $replace = array(" ","\'"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query)
+                    $search = array("%20", "%27","%C3%A7"); // zoek "%20","%27" & "%C3%A7" in url! %20 staat voor spatie, %27 voor single quote ', %C3%A7 voor "ç"
+                    $replace = array(" ","\'","ç"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query), %C3%A7 door "ç"
                     $fetch = $_SERVER["QUERY_STRING"]; // fetch query string url
                     $title = str_replace($search,$replace,$fetch); // variabele voor query
                     $query="SELECT * FROM food.instruction
@@ -193,7 +192,7 @@ $connection->set_charset("utf8");
                             echo $instruction = str_replace($search, $replace, $fetch); // echo met behulp van str_replace
                             ?>
 
-                        <?php }
+                            <?php }
                         } else {
                             echo "Geen resultaten gevonden.";
                         }
@@ -208,8 +207,8 @@ $connection->set_charset("utf8");
                         <p>Bron van dit recept: </p>
                     </div>
                     <?php
-                    $search = array("%20", "%27"); // zoek "%20" & "%27" in url! %20 staat voor spatie, %27 voor single quote '
-                    $replace = array(" ","\'"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query)
+                    $search = array("%20", "%27","%C3%A7"); // zoek "%20","%27" & "%C3%A7" in url! %20 staat voor spatie, %27 voor single quote ', %C3%A7 voor "ç"
+                    $replace = array(" ","\'","ç"); // vervang "%20" door spatie en "%27" door \' (de \ dient om de single quote correct uit te voeren/lezen door de msqli query), %C3%A7 door "ç"
                     $fetch = $_SERVER["QUERY_STRING"]; // fetch query string url
                     $title = str_replace($search,$replace,$fetch); // variabele voor query
                     $query="SELECT * FROM food.recipe WHERE recipe_Name='$title'";
