@@ -426,6 +426,7 @@ $connection->set_charset("utf8");
                         $resultpages = mysqli_query($connection,$total_pages_sql);
                         $count = mysqli_num_rows($resultpages); // geeft het aantal hits terug van de query.
                         $total_pages = ceil($count / $no_of_records_per_page); // ceil = roundup
+                        //echo $offset;
                         // end pagination code
 
                         $query = "SELECT * FROM food.recipe
@@ -451,62 +452,57 @@ $connection->set_charset("utf8");
 
                         if ($result->num_rows > 0) { ?>
 
-                    <div class="col-md-12 aantalRecepten">
-                        <?php // Return the number of rows in result set ?>
-                        <?php $rowcount=mysqli_num_rows($resultpages);
+                        <div class="col-md-12 aantalRecepten">
+                            <?php // Return the number of rows in result set ?>
+                            <?php $rowcount=mysqli_num_rows($resultpages);
                         printf("%d recept(en)",$rowcount); //%d - Take the next argument and print it as an int => betekent dat hij de variabele $rowcount hierin stopt als int?>
-                    </div>
+                        </div>
 
-                    <?php
+                        <?php
 
                         while ($row = mysqli_fetch_array($result)){ ?>
 
-                    <div class="col-md-3 mdStyle">
-                        <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
-                            <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
-                            <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="auto" width="100%">'; // auto & 100% = responsive!?>
-                            <div class="href">
-                                <?php echo$row['recipe_Name']; ?>
+                            <div class="col-md-3 mdStyle">
+                                <?php// door de eerste lijn hieronder eerst te zetten, wordt er een link gemaakt op de foto & receptnaam; de "recipe_Name wordt in de url geplaatst = Querystring! ?>
+                                    <?php echo '<a href="recept.php?'.$row['recipe_Name'].'">';?>
+                                    <?php echo '<img src="data:image/jpeg;base64,'.base64_encode( $row['recipe_Image']).'" height="auto" width="100%">'; // auto & 100% = responsive!?>
+                                    <div class="href">
+                                        <?php echo$row['recipe_Name']; ?>
+                                    </div>
                             </div>
-                    </div>
 
 
-                    <?php }
+                            <?php }
                         } else { ?>
-                    <div class="col-md-12">
-                        <?php echo "Geen resultaten gevonden."; ?>
-                    </div>
-                    <?php
+                            <div class="col-md-12">
+                                <?php echo "Geen resultaten gevonden."; ?>
+                            </div>
+                            <?php
                         }
                         mysqli_close($connection);
                         ?>
                 </div>
             </div>
 
-            <div class="unhide">
-
-                <ul class="pagination">
-                    <li><a href="?pageno=1">First</a></li>
-
-                    <li class="<?php if($pageno <= $total_pages){ echo 'disabled'; } ?>">
-                        <a href="<?php if($pageno <= $total_pages){ echo '#'; } else { echo " ?pageno=".($pageno - 1); } ?>">Prev</a>
-                    </li>
-
-                    <li class="<?php if($pageno >= $total_pages){ echo 'disabled'; } ?>">
-                        <a href="<?php if($pageno >= $total_pages){ echo '#'; } else { echo " ?pageno=".($pageno + 1); } ?>">Next</a>
-                    </li>
-
-                </ul>
-            </div>
-
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="pagination">
+                        <br>
+                        <li class="hide"><a href=""></a></li> <!-- extra lege <li> dient om de ongewilde link van het laatste recept weg te werken  -->
+                        <li class="<?php if($pageno <= 1){ echo 'disabled'; } ?>">
+                            <a href="<?php if($pageno <= 1){ echo '#'; } else { echo " ?pageno=".($pageno - 1); } ?>">Prev</a>
+                        </li>
+                        <li class="<?php if($pageno >= $total_pages){ echo 'disabled'; } ?>">
+                            <a href="<?php if($pageno >= $total_pages){ echo '#'; } else { echo " ?pageno=".($pageno + 1); } ?>">Next</a>
+                        </li>
+                        <br>
+                        <br>
+                        <br>
+                    </ul>
+                </div>
+        <!-- div hierboven is de sluitingsdiv van eerste container -->
         </div>
+
 
         <!-- Dropdown Gelegenheid-->
         <script>
