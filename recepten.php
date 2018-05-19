@@ -92,23 +92,19 @@ $connection->set_charset("utf8");
                 <div class="well">
                     <!-- wrap div om gemakkelijk het geheel van de zoekbar & button te restylen in css  -->
                     <div class="wrap">
-                        <form action="recepten.php" method="post">
+                        <form action="recepten.php" method="GET">
                             <input type="text" class="searchTerm" name="trefwoord" placeholder="Zoek">
                             <!-- al deze input velden slaan de waarde van de dropdown selectie op voor verdere POST actie, deze tekstvelden worden gehide via class "hide"("unhide")-->
-                            <div class="unhide">
-                                <?php //de php code in de value checkt of er een waarde werd gekozen en onthoudt deze ook na de submit of refresh van de pagina => belangrijk in pagination
-                                // wanneer je door de resultaten per pagina navigeert, anders geeft hij terug alle resultaten weer (wegens blanco veld) ?>
-                                <input type="text" class="form-control" id="categorieText" name="categorie" value="<?php if(isset($_POST['categorie'])){echo $_POST['categorie'];} ?>" readonly>
-                                <input type="text" class="form-control" id="seizoenText" name="seizoen" value="<?php if(isset($_POST['seizoen'])){echo $_POST['seizoen'];} ?>" readonly>
-                                <input type="text" class="form-control" id="keukenText" name="keuken" value="<?php if(isset($_POST['keuken'])){echo $_POST['keuken'];} ?>" readonly>
-                                <input type="text" class="form-control" id="gelegenheidText" name="gelegenheid" value="<?php if(isset($_POST['gelegenheid'])){echo $_POST['gelegenheid'];} ?>" readonly>
-                                <input type="text" class="form-control" id="gerechtText" name="gerecht" value="<?php if(isset($_POST['gerecht'])){echo $_POST['gerecht'];} ?>" readonly>
-                                <input type="text" class="form-control" id="moeilijkheidText" name="moeilijkheid" value="<?php if(isset($_POST['moeilijkheid'])){echo $_POST['moeilijkheid'];} ?>" readonly>
-                                <input type="text" class="form-control" id="duurText" name="duur" value="<?php if(isset($_POST['duur'])){echo $_POST['duur'];} ?>" readonly>
+                            <div class="hide">
+                                <input type="text" class="form-control" id="categorieText" name="categorie" readonly>
+                                <input type="text" class="form-control" id="seizoenText" name="seizoen" readonly>
+                                <input type="text" class="form-control" id="keukenText" name="keuken" readonly>
+                                <input type="text" class="form-control" id="gelegenheidText" name="gelegenheid" readonly>
+                                <input type="text" class="form-control" id="gerechtText" name="gerecht" readonly>
+                                <input type="text" class="form-control" id="moeilijkheidText" name="moeilijkheid" readonly>
+                                <input type="text" class="form-control" id="duurText" name="duur" readonly>
                             </div>
                             <button type="submit" class="searchButton">
-                            <!--<button type="submit" class="searchButton" onclick="timeFunction()"> -->
-                            <!--<button type="submit" class="searchButton" onclick="$('#criteria').show()">-->
                             <i class="fa fa-search"></i> <!-- search icon bootstrap -->
                             </button>
                         </form>
@@ -296,14 +292,14 @@ $connection->set_charset("utf8");
             <!-- Code om de zoekhistoriek weer te geven-->
             <div class="zoekhistoriek">
                 Uw laatste zoekcriteria was: <br>
-                <?php echo isset($_POST['trefwoord']) ? $_POST['trefwoord']:'' ?> &nbsp;
-                <?php echo isset($_POST['gelegenheid']) ? $_POST['gelegenheid'] : ' ' ?> &nbsp;
-                <?php echo isset($_POST['keuken']) ? $_POST['keuken'] : ' ' ?> &nbsp;
-                <?php echo isset($_POST['categorie']) ? $_POST['categorie'] : ' ' ?> &nbsp;
-                <?php echo isset($_POST['seizoen']) ? $_POST['seizoen'] : ' ' ?> &nbsp;
-                <?php echo isset($_POST['gerecht']) ? $_POST['gerecht'] : ' ' ?> &nbsp;
-                <?php echo isset($_POST['moeilijkheid']) ? $_POST['moeilijkheid'] : ' ' ?> &nbsp;
-                <?php echo isset($_POST['duur']) ? $_POST['duur'] : ' ' ?>
+                <?php echo isset($_GET['trefwoord']) ? $_GET['trefwoord']:'' ?> &nbsp;
+                <?php echo isset($_GET['gelegenheid']) ? $_GET['gelegenheid'] : ' ' ?> &nbsp;
+                <?php echo isset($_GET['keuken']) ? $_GET['keuken'] : ' ' ?> &nbsp;
+                <?php echo isset($_GET['categorie']) ? $_GET['categorie'] : ' ' ?> &nbsp;
+                <?php echo isset($_GET['seizoen']) ? $_GET['seizoen'] : ' ' ?> &nbsp;
+                <?php echo isset($_GET['gerecht']) ? $_GET['gerecht'] : ' ' ?> &nbsp;
+                <?php echo isset($_GET['moeilijkheid']) ? $_GET['moeilijkheid'] : ' ' ?> &nbsp;
+                <?php echo isset($_GET['duur']) ? $_GET['duur'] : ' ' ?>
             </div>
             <br>
 
@@ -359,45 +355,47 @@ $connection->set_charset("utf8");
                     <?php
 
                         //alle velden checken of ze wel ingevuld/geselecteerd werden, de variabelen tussen de '' komen van de hidden tekstvelden in div class "hide" lijn 98
-                        if (empty($_POST['trefwoord'])){
+                        //we gebruiken de GET methode ipv POST omdat we de input value & gekozen selecties in de url querystring willen zien om nadien te gebruiken bij de navigatieknoppen van de //pagination
+
+                        if (empty($_GET['trefwoord'])){
                         $trefwoord="%";}
-                        if (!empty($_POST['trefwoord'])){
-                        $trefwoord = mysqli_real_escape_string($connection, $_POST['trefwoord']);}
+                        if (!empty($_GET['trefwoord'])){
+                        $trefwoord = mysqli_real_escape_string($connection, $_GET['trefwoord']);}
 
-                        if (empty($_POST['gelegenheid'])){
+                        if (empty($_GET['gelegenheid'])){
                         $gelegenheid="%";}
-                        if (!empty($_POST['gelegenheid'])){
-                        $gelegenheid = mysqli_real_escape_string($connection, $_POST['gelegenheid']);}
+                        if (!empty($_GET['gelegenheid'])){
+                        $gelegenheid = mysqli_real_escape_string($connection, $_GET['gelegenheid']);}
 
-                        if (empty($_POST['keuken'])){
+                        if (empty($_GET['keuken'])){
                         $keuken="%";}
-                        if (!empty($_POST['keuken'])){
-                        $keuken = mysqli_real_escape_string($connection, $_POST['keuken']);}
+                        if (!empty($_GET['keuken'])){
+                        $keuken = mysqli_real_escape_string($connection, $_GET['keuken']);}
 
-                        if (empty($_POST['categorie'])){
+                        if (empty($_GET['categorie'])){
                         $categorie="%";}
-                        if (!empty($_POST['categorie'])){
-                        $categorie = mysqli_real_escape_string($connection, $_POST['categorie']);}
+                        if (!empty($_GET['categorie'])){
+                        $categorie = mysqli_real_escape_string($connection, $_GET['categorie']);}
 
-                        if (empty($_POST['seizoen'])){
+                        if (empty($_GET['seizoen'])){
                         $seizoen="%";}
-                        if (!empty($_POST['seizoen'])){
-                        $seizoen = mysqli_real_escape_string($connection, $_POST['seizoen']);}
+                        if (!empty($_GET['seizoen'])){
+                        $seizoen = mysqli_real_escape_string($connection, $_GET['seizoen']);}
 
-                        if (empty($_POST['gerecht'])){
+                        if (empty($_GET['gerecht'])){
                         $gerecht="%";}
-                        if (!empty($_POST['gerecht'])){
-                        $gerecht = mysqli_real_escape_string($connection, $_POST['gerecht']);}
+                        if (!empty($_GET['gerecht'])){
+                        $gerecht = mysqli_real_escape_string($connection, $_GET['gerecht']);}
 
-                        if (empty($_POST['moeilijkheid'])){
+                        if (empty($_GET['moeilijkheid'])){
                         $moeilijkheid="%";}
-                        if (!empty($_POST['moeilijkheid'])){
-                        $moeilijkheid = mysqli_real_escape_string($connection, $_POST['moeilijkheid']);}
+                        if (!empty($_GET['moeilijkheid'])){
+                        $moeilijkheid = mysqli_real_escape_string($connection, $_GET['moeilijkheid']);}
 
-                        if (empty($_POST['duur'])){
+                        if (empty($_GET['duur'])){
                         $duur="%";}
-                        if (!empty($_POST['duur'])){
-                        $duur = mysqli_real_escape_string($connection, $_POST['duur']);}
+                        if (!empty($_GET['duur'])){
+                        $duur = mysqli_real_escape_string($connection, $_GET['duur']);}
 
                         // beginning pagination code
                         if (isset($_GET['pageno'])) {
@@ -407,7 +405,7 @@ $connection->set_charset("utf8");
                         }
 
                         // max aantal treffers per pagina
-                        $no_of_records_per_page = 16;
+                        $no_of_records_per_page = 10;
 
                         // om de index bij te houden vanaf welke records weer te geven (pag1 = 0 | pag2 = 16 | pag3= 32 ...)
                         $offset = ($pageno-1) * $no_of_records_per_page;
@@ -497,6 +495,7 @@ $connection->set_charset("utf8");
                 </div>
             </div>
 
+
             <!-- navigatieknoppen onderaan de pagina-->
             <div class="row">
                 <div class="col-md-12 pagination">
@@ -505,15 +504,39 @@ $connection->set_charset("utf8");
                         <br>
                         <br>
 
-                        <li class="hide"><a href=""></a></li>
-                        <!-- extra lege <li> dient om de ongewilde link van het laatste recept weg te werken  -->
 
+                        <!-- 1. extra lege <li> dient om de ongewilde link van het laatste recept weg te werken  -->
+                        <li class="hide"><a href=""></a></li>
+
+                        <!-- 2. PREV BUTTON-->
+                            <!-- disable button als de paginanummer kleiner / gelijk is aan 1 (initiele status van de variabele)-->
                         <li class="<?php if($pageno <= 1){ echo 'disabled'; } ?>">
-                            <a href="<?php if($pageno <= 1){ echo '#'; } else { echo " ?pageno=".($pageno - 1); } ?>">Prev</a>
+
+                            <!-- variabele queryString -->
+                            <?php $queryString = $_SERVER["QUERY_STRING"]; // fetch current query string in url before clicking on NEXT button ?>
+
+                            <!-- Deze href versie met pageno vooraan in de querystring werkt niet !! -->
+                            <!-- <a href="<?php// if($pageno <= 1){ echo '#'; } else { echo " ?pageno=".($pageno - 1)," & ",$queryString; } ?>">Prev</a> -->
+
+                            <!-- als de paginanummer kleiner / gelijk is aan 1, voeg "#" toe aan query string -->
+                            <!-- else: voeg paginanummer toe + de huidige querystring (anders vergeet de pagina de huidige zoekopdracht door op de button te drukken en geeft hij terug alle resultaten weer zoals bij het begin van het laden van de pagina) -->
+                            <!-- OPMERKING ! Deze href versie werkt wel, maar hij telt de pagina's wel op in de querystring en gebruikt tenslotte de laatste: vb: &pageno=2&pageno=3&pageno=2&pageno=1 !! -->
+                            <a href="<?php if($pageno <= 1){ echo '#'; } else { echo "?",$queryString, "&pageno=".($pageno - 1) ; } ?>">Prev</a>
+
                         </li>
 
+                        <!-- 3. NEXT BUTTON-->
+                            <!-- disable button als de paginanummer groter / gelijk aan de totaal aan pagina's is -->
                         <li class="<?php if($pageno >= $total_pages){ echo 'disabled'; } ?>">
-                            <a href="<?php if($pageno >= $total_pages){ echo '#'; } else { echo " ?pageno=".($pageno + 1); } ?>">Next</a>
+
+                            <!-- variabele queryString -->
+                            <?php $queryString = $_SERVER["QUERY_STRING"]; // fetch current query string in url before clicking on NEXT button ?>
+
+                            <!-- als de paginanummer groter / gelijk aan de totaal aan pagina's is, voeg "#" toe aan query string -->
+                            <!-- else: voeg paginanummer toe + de huidige querystring (anders vergeet de pagina de huidige zoekopdracht door op de button te drukken en geeft hij terug alle resultaten weer zoals bij het begin van het laden van de pagina) -->
+
+                            <a href="<?php if($pageno >= $total_pages){ echo '#'; } else { echo "?",$queryString, "&pageno=".($pageno + 1) ; } ?>">Next</a>
+
                         </li>
 
                         <br>
@@ -552,7 +575,6 @@ $connection->set_charset("utf8");
             });
 
         </script>
-
         <!-- Dropdown Categorie-->
         <script>
             $(document).ready(function() {
@@ -628,7 +650,13 @@ $connection->set_charset("utf8");
 
         </script>
 
+        <!-- testfunctie show queryString van de url (niet meer nodig) -->
+        <script>
+            var url = window.location.search;
+            url = url.replace("?", ''); // remove the ? with nothing
+            //alert(url); // show
 
+        </script>
 
     </body>
 
