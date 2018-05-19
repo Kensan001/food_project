@@ -95,14 +95,16 @@ $connection->set_charset("utf8");
                         <form action="recepten.php" method="post">
                             <input type="text" class="searchTerm" name="trefwoord" placeholder="Zoek">
                             <!-- al deze input velden slaan de waarde van de dropdown selectie op voor verdere POST actie, deze tekstvelden worden gehide via class "hide"("unhide")-->
-                            <div class="hide">
-                                <input type="text" class="form-control" id="categorieText" name="categorie" readonly>
-                                <input type="text" class="form-control" id="seizoenText" name="seizoen" readonly>
-                                <input type="text" class="form-control" id="keukenText" name="keuken" readonly>
-                                <input type="text" class="form-control" id="gelegenheidText" name="gelegenheid" readonly>
-                                <input type="text" class="form-control" id="gerechtText" name="gerecht" readonly>
-                                <input type="text" class="form-control" id="moeilijkheidText" name="moeilijkheid" readonly>
-                                <input type="text" class="form-control" id="duurText" name="duur" readonly>
+                            <div class="unhide">
+                                <?php //de php code in de value checkt of er een waarde werd gekozen en onthoudt deze ook na de submit of refresh van de pagina => belangrijk in pagination
+                                // wanneer je door de resultaten per pagina navigeert, anders geeft hij terug alle resultaten weer (wegens blanco veld) ?>
+                                <input type="text" class="form-control" id="categorieText" name="categorie" value="<?php if(isset($_POST['categorie'])){echo $_POST['categorie'];} ?>" readonly>
+                                <input type="text" class="form-control" id="seizoenText" name="seizoen" value="<?php if(isset($_POST['seizoen'])){echo $_POST['seizoen'];} ?>" readonly>
+                                <input type="text" class="form-control" id="keukenText" name="keuken" value="<?php if(isset($_POST['keuken'])){echo $_POST['keuken'];} ?>" readonly>
+                                <input type="text" class="form-control" id="gelegenheidText" name="gelegenheid" value="<?php if(isset($_POST['gelegenheid'])){echo $_POST['gelegenheid'];} ?>" readonly>
+                                <input type="text" class="form-control" id="gerechtText" name="gerecht" value="<?php if(isset($_POST['gerecht'])){echo $_POST['gerecht'];} ?>" readonly>
+                                <input type="text" class="form-control" id="moeilijkheidText" name="moeilijkheid" value="<?php if(isset($_POST['moeilijkheid'])){echo $_POST['moeilijkheid'];} ?>" readonly>
+                                <input type="text" class="form-control" id="duurText" name="duur" value="<?php if(isset($_POST['duur'])){echo $_POST['duur'];} ?>" readonly>
                             </div>
                             <button type="submit" class="searchButton">
                             <!--<button type="submit" class="searchButton" onclick="timeFunction()"> -->
@@ -125,7 +127,8 @@ $connection->set_charset("utf8");
                         <div class="dropdownGelegenheid">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Gelegenheid
                         <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
+                            <!-- caret toont een pijltje om aan te tonen dat het dropdown button is -->
+                            <ul class="dropdown-menu" id="myTab">
                                 <li>
                                     <?php
                         $query=mysqli_query ($connection,'select * from food.theme');
@@ -403,10 +406,14 @@ $connection->set_charset("utf8");
                         $pageno = 1;
                         }
 
+                        // max aantal treffers per pagina
                         $no_of_records_per_page = 16;
+
+                        // om de index bij te houden vanaf welke records weer te geven (pag1 = 0 | pag2 = 16 | pag3= 32 ...)
                         $offset = ($pageno-1) * $no_of_records_per_page;
 
-                        $total_pages_sql = "SELECT * FROM food.recipe
+                        // query om het aantal hits/resultaten later te berekenen in variabele $hits
+                        $hits_sql = "SELECT * FROM food.recipe
                                     INNER JOIN food.season ON season_season_ID1 = season_ID
                                     INNER JOIN food.category ON category_category_ID1 = category_ID
                                     INNER JOIN food.kitchen ON kitchen_kitchen_ID1 = kitchen_ID
@@ -423,10 +430,16 @@ $connection->set_charset("utf8");
                                     AND instruction_Difficulty LIKE '$moeilijkheid'
                                     AND instruction_Duration LIKE '$duur'";
 
-                        $resultpages = mysqli_query($connection,$total_pages_sql);
-                        $count = mysqli_num_rows($resultpages); // geeft het aantal hits terug van de query.
+                        // geeft het aantal hits/resultaten terug van de query hierboven => wordt gebruikt steeds het aantal treffers te echo'en op de site.
+                        $hits = mysqli_query($connection,$hits_sql);
+
+                        // het aantal hits in een int variabele steken waarmee we de aantal pagina's kunnen berekenen
+                        $count = mysqli_num_rows($hits);
+
+                        // totale pagina's:
                         $total_pages = ceil($count / $no_of_records_per_page); // ceil = roundup
-                        //echo $offset;
+
+                        // echo $offset;
                         // end pagination code
 
                         $query = "SELECT * FROM food.recipe
@@ -453,8 +466,8 @@ $connection->set_charset("utf8");
                         if ($result->num_rows > 0) { ?>
 
                         <div class="col-md-12 aantalRecepten">
-                            <?php // Return the number of rows in result set ?>
-                            <?php $rowcount=mysqli_num_rows($resultpages);
+                            <?php // Return the number of rows in result set => aantal resultaten dat gevonden werd weergeven?>
+                            <?php $rowcount=mysqli_num_rows($hits);
                         printf("%d recept(en)",$rowcount); //%d - Take the next argument and print it as an int => betekent dat hij de variabele $rowcount hierin stopt als int?>
                         </div>
 
@@ -484,25 +497,33 @@ $connection->set_charset("utf8");
                 </div>
             </div>
 
+            <!-- navigatieknoppen onderaan de pagina-->
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 pagination">
                     <ul class="pagination">
                         <br>
-                        <li class="hide"><a href=""></a></li> <!-- extra lege <li> dient om de ongewilde link van het laatste recept weg te werken  -->
+                        <br>
+                        <br>
+
+                        <li class="hide"><a href=""></a></li>
+                        <!-- extra lege <li> dient om de ongewilde link van het laatste recept weg te werken  -->
+
                         <li class="<?php if($pageno <= 1){ echo 'disabled'; } ?>">
                             <a href="<?php if($pageno <= 1){ echo '#'; } else { echo " ?pageno=".($pageno - 1); } ?>">Prev</a>
                         </li>
+
                         <li class="<?php if($pageno >= $total_pages){ echo 'disabled'; } ?>">
                             <a href="<?php if($pageno >= $total_pages){ echo '#'; } else { echo " ?pageno=".($pageno + 1); } ?>">Next</a>
                         </li>
+
                         <br>
                         <br>
                         <br>
                     </ul>
                 </div>
-        <!-- div hierboven is de sluitingsdiv van eerste container -->
-        </div>
 
+            </div>
+        </div>
 
         <!-- Dropdown Gelegenheid-->
         <script>
@@ -606,9 +627,6 @@ $connection->set_charset("utf8");
             });
 
         </script>
-
-
-
 
 
 

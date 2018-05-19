@@ -187,7 +187,10 @@ section{
     font-size: 26px;
 }
 
-.pagination{
+.pagination{    /* center the pagination li buttons responsive using flexbox*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
 }
 
